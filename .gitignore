@@ -1,3 +1,4 @@
 node_modules/*
 **/.terragrunt-cache/*
 **/.terraform.lock*
+**/.DS_Store
