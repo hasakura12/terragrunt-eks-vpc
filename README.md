@@ -41,5 +41,8 @@ Edit .husky/pre-commit file for linting and running tests
 terraform fmt --recursive
 terraform validate
 
+# run terragrunt fmt
+terragrunt hclfmt
+
 # run other smoke or acceptance tests etc
 ```
