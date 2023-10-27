@@ -28,7 +28,7 @@ locals {
 
   # Expose the base source URL so different versions of the module can be deployed in different environments. This will
   # be used to construct the terraform block in the child terragrunt configurations.
-  base_source_url = "../../..//modules/eks" # relative path from execution dir
+  base_source_url = "../../..//modules/eks-fargate" # relative path from execution dir
 }
 
 # explicitly define dependency. Ref: https://terragrunt.gruntwork.io/docs/features/execute-terraform-commands-on-multiple-modules-at-once/#dependencies-between-modules
