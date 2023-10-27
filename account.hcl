@@ -2,6 +2,6 @@
 # terragrunt.hcl configuration.
 locals {
   account_name   = "terragrunt-eks-vcp"
-  aws_account_id = "266981300450" # TODO: replace me with your AWS account ID!
+  aws_account_id = "266981300450"
   role_name      = "Terraform"
 }
