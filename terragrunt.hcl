@@ -11,9 +11,10 @@ locals {
   # Extract the variables we need for easy access
   account_name = local.account_vars.locals.account_name
   account_id   = local.account_vars.locals.aws_account_id
-  region   = local.region_vars.locals.region
-  role_name = local.account_vars.locals.role_name
-  env = local.environment_vars.locals.env
+  region       = local.region_vars.locals.region
+  region_short = local.region_vars.locals.region_short
+  role_name    = local.account_vars.locals.role_name
+  env          = local.environment_vars.locals.env
 }
 
 # Generate an AWS provider block
@@ -34,6 +35,7 @@ provider "aws" {
       App    = "${local.account_name}"
       Env    = "${local.env}"
       Region = "${local.region}"
+      Region_Short = "${local.region_short}"
     }
   }
 
