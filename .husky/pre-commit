@@ -9,6 +9,8 @@ terraform validate
 terragrunt hclfmt --terragrunt-diff
 terragrunt hclfmt 
 
+# will fail if run by GitHub Desktop due to not assuming AWS IAM role
+# will fail if run from non leaf-level dir (i.e. root dir)
 # terragrunt run-all validate
 
 # run other smoke or acceptance tests etc
