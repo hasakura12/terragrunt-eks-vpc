@@ -1,1 +1,3 @@
 node_modules/*
+**/.terragrunt-cache/*
+**/.terraform.lock*
