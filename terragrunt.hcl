@@ -11,10 +11,10 @@ locals {
   # Extract the variables we need for easy access
   account_name = local.account_vars.locals.account_name
   account_id   = local.account_vars.locals.aws_account_id
-  region       = local.region_vars.locals.region
-  region_short = local.region_vars.locals.region_short
-  role_name    = local.account_vars.locals.role_name
-  env          = local.environment_vars.locals.env
+  region   = local.region_vars.locals.region
+  region_short   = local.region_vars.locals.region_short
+  role_name = local.account_vars.locals.role_name
+  env = local.environment_vars.locals.env
 }
 
 # Generate an AWS provider block
@@ -50,10 +50,10 @@ remote_state {
   backend = "s3"
   config = {
     encrypt        = true
-    bucket         = "${get_env("TG_BUCKET_PREFIX", "")}s3-${local.env}-${local.region}-${local.account_name}-terraform-state"
+    bucket         = "${get_env("TG_BUCKET_PREFIX", "")}s3-${local.env}-${local.region_short}-${local.account_name}-terraform-state"
     key            = "${path_relative_to_include()}/terraform.tfstate"
     region         = local.region
-    dynamodb_table = "dynamo-${local.env}-${local.region}-${local.account_name}-terraform-lock"
+    dynamodb_table = "dynamo-${local.env}-${local.region_short}-${local.account_name}-terraform-lock"
   }
   generate = {
     path      = "backend.tf"

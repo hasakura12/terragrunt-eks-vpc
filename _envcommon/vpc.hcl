@@ -22,8 +22,9 @@ locals {
 
   # Extract out common variables for reuse
   account_name = local.account_vars.locals.account_name
-  env = local.environment_vars.locals.env
-  region   = local.region_vars.locals.region
+  env          = local.environment_vars.locals.env
+  region       = local.region_vars.locals.region
+  region_short = local.region_vars.locals.region_short
 
   # Expose the base source URL so different versions of the module can be deployed in different environments. This will
   # be used to construct the terraform block in the child terragrunt configurations.
@@ -36,15 +37,15 @@ locals {
 # environments.
 # ---------------------------------------------------------------------------------------------------------------------
 inputs = {
-  name   = "vpc-${local.env}-${local.region}-${local.account_name}"
+  name   = "vpc-${local.env}-${local.region_short}-${local.account_name}"
   region = local.region
 
-  cidr                                 = "10.1.0.0/16"
-  azs                                  = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d"]
-  public_subnets                       = ["10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24", "10.1.4.0/24"] # 256 IPs per subnet
-  private_subnets                      = ["10.1.101.0/24", "10.1.102.0/24", "10.1.103.0/24", "10.1.104.0/24"]
-  database_subnets                     = ["10.1.105.0/24", "10.1.106.0/24", "10.1.107.0/24", "10.1.108.0/24"]
-  intra_subnets = [] 
+  cidr             = "10.1.0.0/16"
+  azs              = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d"]
+  public_subnets   = ["10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24", "10.1.4.0/24"] # 256 IPs per subnet
+  private_subnets  = ["10.1.101.0/24", "10.1.102.0/24", "10.1.103.0/24", "10.1.104.0/24"]
+  database_subnets = ["10.1.105.0/24", "10.1.106.0/24", "10.1.107.0/24", "10.1.108.0/24"]
+  intra_subnets    = []
 
   enable_flow_log                      = false # not in development
   create_flow_log_cloudwatch_iam_role  = false
@@ -55,10 +56,10 @@ inputs = {
   enable_vpn_gateway                   = false
 
   public_subnet_tags = {
-    Name = "vpc-${local.env}-${local.region}-${local.account_name}-public"
+    Name = "vpc-${local.env}-${local.region_short}-${local.account_name}-public"
   }
-  
+
   private_subnet_tags = {
-    Name = "vpc-${local.env}-${local.region}-${local.account_name}-private"
+    Name = "vpc-${local.env}-${local.region_short}-${local.account_name}-private"
   }
 }

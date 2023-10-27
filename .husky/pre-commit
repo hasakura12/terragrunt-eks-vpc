@@ -5,4 +5,7 @@
 terraform fmt --recursive
 terraform validate
 
+# run terragrunt fmt
+terragrunt hclfmt
+
 # run other smoke or acceptance tests etc
