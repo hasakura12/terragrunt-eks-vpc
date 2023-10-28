@@ -84,10 +84,10 @@ Terraform will perform the following actions:
       + retention_in_days = 7
       + skip_destroy      = false
       + tags_all          = {
-          + "App"          = "terragrunt-eks-vpc"
-          + "Env"          = "dev"
-          + "Region"       = "us-east-1"
-          + "Region_Short" = "ue1"
+          + "App"        = "terragrunt-eks-vpc"
+          + "Env"        = "dev"
+          + "Region"     = "us-east-1"
+          + "Region_Tag" = "ue1"
         }
     }
 
@@ -112,10 +112,10 @@ Terraform will perform the following actions:
       + role_arn                  = (known after apply)
       + status                    = (known after apply)
       + tags_all                  = {
-          + "App"          = "terragrunt-eks-vpc"
-          + "Env"          = "dev"
-          + "Region"       = "us-east-1"
-          + "Region_Short" = "ue1"
+          + "App"        = "terragrunt-eks-vpc"
+          + "Env"        = "dev"
+          + "Region"     = "us-east-1"
+          + "Region_Tag" = "ue1"
         }
       + version                   = "1.28"
 
@@ -171,10 +171,10 @@ Terraform will perform the following actions:
       + name_prefix           = (known after apply)
       + path                  = "/"
       + tags_all              = {
-          + "App"          = "terragrunt-eks-vpc"
-          + "Env"          = "dev"
-          + "Region"       = "us-east-1"
-          + "Region_Short" = "ue1"
+          + "App"        = "terragrunt-eks-vpc"
+          + "Env"        = "dev"
+          + "Region"     = "us-east-1"
+          + "Region_Tag" = "ue1"
         }
       + unique_id             = (known after apply)
     }
@@ -218,10 +218,10 @@ Terraform will perform the following actions:
       + multi_region                       = (known after apply)
       + policy                             = (known after apply)
       + tags_all                           = {
-          + "App"          = "terragrunt-eks-vpc"
-          + "Env"          = "dev"
-          + "Region"       = "us-east-1"
-          + "Region_Short" = "ue1"
+          + "App"        = "terragrunt-eks-vpc"
+          + "Env"        = "dev"
+          + "Region"     = "us-east-1"
+          + "Region_Tag" = "ue1"
         }
     }
 
@@ -237,10 +237,10 @@ Terraform will perform the following actions:
       + owner_id               = (known after apply)
       + revoke_rules_on_delete = false
       + tags_all               = {
-          + "App"          = "terragrunt-eks-vpc"
-          + "Env"          = "dev"
-          + "Region"       = "us-east-1"
-          + "Region_Short" = "ue1"
+          + "App"        = "terragrunt-eks-vpc"
+          + "Env"        = "dev"
+          + "Region"     = "us-east-1"
+          + "Region_Tag" = "ue1"
         }
       + vpc_id                 = "vpc-02de7e4cf2abfbd86"
     }
@@ -248,17 +248,19 @@ Terraform will perform the following actions:
 Plan: 8 to add, 0 to change, 0 to destroy.
 
 Changes to Outputs:
-  + eks_cluster_arn                = (known after apply)
-  + eks_cluster_endpoint           = (known after apply)
-  + eks_cluster_iam_role_arn       = (known after apply)
-  + eks_cluster_iam_role_name      = "eks-cluster-control-plane"
-  + eks_cluster_iam_role_unique_id = (known after apply)
-  + eks_cluster_id                 = (known after apply)
-  + eks_cluster_name               = "eks-dev-ue1"
-  + eks_cluster_platform_version   = (known after apply)
-  + eks_cluster_status             = (known after apply)
-  + eks_cluster_version            = "1.28"
-  + eks_secret_alias_arn           = (known after apply)
-  + eks_secret_id                  = (known after apply)
-  + eks_secret_kms_arn             = (known after apply)
+  + cluster_arn                        = (known after apply)
+  + cluster_certificate_authority_data = (known after apply)
+  + cluster_cloudwatch_logs_arn        = (known after apply)
+  + cluster_endpoint                   = (known after apply)
+  + cluster_iam_role_arn               = (known after apply)
+  + cluster_iam_role_name              = "eks-cluster-control-plane"
+  + cluster_iam_role_unique_id         = (known after apply)
+  + cluster_id                         = (known after apply)
+  + cluster_name                       = "eks-dev-ue1"
+  + cluster_platform_version           = (known after apply)
+  + cluster_secret_alias_arn           = (known after apply)
+  + cluster_secret_id                  = (known after apply)
+  + cluster_secret_kms_arn             = (known after apply)
+  + cluster_status                     = (known after apply)
+  + cluster_version                    = "1.28"
 ```
