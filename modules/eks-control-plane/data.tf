@@ -2,7 +2,7 @@ locals {
   ########################################
   ##  KMS for K8s secret's DEK (data encryption key) encryption
   ########################################
-  k8s_secret_kms_key_name                    = "alias/cmk-${var.env}-${var.region_short}-k8s-secret-dek"
+  k8s_secret_kms_key_name                    = "alias/cmk-${var.env}-${var.region_tag[var.region]}-k8s-secret-dek"
   k8s_secret_kms_key_description             = "Kms key used for encrypting K8s secret DEK (data encryption key)"
   k8s_secret_kms_key_deletion_window_in_days = "30"
 }
