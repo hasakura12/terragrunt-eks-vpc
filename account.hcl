@@ -3,7 +3,7 @@
 locals {
   account_name         = "terragrunt-eks-vpc"
   aws_account_id       = "266981300450"
-  role_name            = "Terraform"
+  terraform_role_name  = "Terraform"
   developer_role_name  = "Developer"
   full_admin_role_name = "FullAdmin"
 }
