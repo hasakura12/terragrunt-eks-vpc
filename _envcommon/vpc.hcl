@@ -24,7 +24,7 @@ locals {
   account_name = local.account_vars.locals.account_name
   env          = local.environment_vars.locals.env
   region       = local.region_vars.locals.region
-  region_short = local.region_vars.locals.region_short
+  region_tag   = local.region_vars.locals.region_tag
 
   # Expose the base source URL so different versions of the module can be deployed in different environments. This will
   # be used to construct the terraform block in the child terragrunt configurations.
@@ -37,7 +37,7 @@ locals {
 # environments.
 # ---------------------------------------------------------------------------------------------------------------------
 inputs = {
-  name   = "vpc-${local.env}-${local.region_short}-${local.account_name}"
+  name   = "vpc-${local.env}-${local.region_tag[local.region]}-${local.account_name}"
   region = local.region
 
   cidr             = "10.1.0.0/16"
@@ -56,10 +56,10 @@ inputs = {
   enable_vpn_gateway                   = false
 
   public_subnet_tags = {
-    Name = "vpc-${local.env}-${local.region_short}-${local.account_name}-public"
+    Name = "vpc-${local.env}-${local.region_tag[local.region]}-${local.account_name}-public"
   }
 
   private_subnet_tags = {
-    Name = "vpc-${local.env}-${local.region_short}-${local.account_name}-private"
+    Name = "vpc-${local.env}-${local.region_tag[local.region]}-${local.account_name}-private"
   }
 }

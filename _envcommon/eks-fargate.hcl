@@ -56,7 +56,7 @@ dependency "vpc" {
 # environments.
 # ---------------------------------------------------------------------------------------------------------------------
 inputs = {
-  name   = "eks-${local.env}-${local.region_short}"
+  name   = "eks-${local.env}-${local.region_tag[local.region]}"
   region = local.region
 
   # note: if dependent module "vpc" hasn't been deployed, "terragrunt plan" will error out "Either the target module has not been applied yet, or the module has no outputs"

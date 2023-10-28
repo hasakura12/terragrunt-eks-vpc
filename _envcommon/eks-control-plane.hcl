@@ -24,7 +24,7 @@ locals {
   account_name = local.account_vars.locals.account_name
   env          = local.environment_vars.locals.env
   region       = local.region_vars.locals.region
-  region_short = local.region_vars.locals.region_short
+  region_tag   = local.region_vars.locals.region_tag
 
   # Expose the base source URL so different versions of the module can be deployed in different environments. This will
   # be used to construct the terraform block in the child terragrunt configurations.
@@ -56,9 +56,9 @@ dependency "vpc" {
 # environments.
 # ---------------------------------------------------------------------------------------------------------------------
 inputs = {
-  cluster_name = "eks-${local.env}-${local.region_short}"
+  cluster_name = "eks-${local.env}-${local.region_tag[local.region]}"
   region       = local.region
-  region_short = local.region_short
+  region_tag   = local.region_vars.locals.region_tag
   env          = local.env
 
   # note: if dependent module "vpc" hasn't been deployed, "terragrunt plan" will error out "Either the target module has not been applied yet, or the module has no outputs"
