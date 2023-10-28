@@ -20,19 +20,6 @@ variable "env" {
   description = "env"
 }
 
-# dependencies
-variable "vpc_id" {
-  type        = string
-  description = "VPC ID for the cluster"
-  default     = ""
-}
-
-variable "private_subnets" {
-  type        = list(string)
-  description = "List of subnets for cluster worker nodes"
-  default     = []
-}
-
 # EKS
 variable "cluster_name" {
   description = "EKS cluster name"
