@@ -26,6 +26,8 @@ locals {
   region       = local.region_vars.locals.region
   region_tag   = local.region_vars.locals.region_tag
 
+  cluster_name = "eks-${local.env}-${local.region_tag[local.region]}"
+
   # Expose the base source URL so different versions of the module can be deployed in different environments. This will
   # be used to construct the terraform block in the child terragrunt configurations.
   base_source_url = "../../..//modules/eks-workers" # relative path from execution dir
@@ -33,7 +35,7 @@ locals {
 
 # explicitly define dependency. Ref: https://terragrunt.gruntwork.io/docs/features/execute-terraform-commands-on-multiple-modules-at-once/#dependencies-between-modules
 dependencies {
-  paths = ["../vpc", "../eks-control-plane"]
+  paths = ["../vpc", "../eks-control-plane", "../eks-workers-ebs-encryption"]
 }
 
 dependency "vpc" {
@@ -58,7 +60,18 @@ dependency "eks" {
     cluster_endpoint                   = "dummy"
     cluster_certificate_authority_data = "dummy"
     cluster_primary_security_group_id  = "sg-"
-    cluster_iam_role_arn               = "dummy"
+  }
+
+  mock_outputs_allowed_terraform_commands = ["plan", "validate"]
+  mock_outputs_merge_strategy_with_state  = "shallow" # merge the mocked outputs and the state outputs
+}
+
+dependency "eks-workers-ebs-encryption" {
+  config_path = "../eks-workers-ebs-encryption"
+
+  # ref: https://terragrunt.gruntwork.io/docs/features/execute-terraform-commands-on-multiple-modules-at-once/#unapplied-dependency-and-mock-outputs
+  mock_outputs = {
+    kms_key_arn = "dummy"
   }
 
   mock_outputs_allowed_terraform_commands = ["plan", "validate"]
@@ -79,16 +92,13 @@ inputs = {
   cluster_endpoint                   = dependency.eks.outputs.cluster_endpoint
   cluster_certificate_authority_data = dependency.eks.outputs.cluster_certificate_authority_data
   cluster_primary_security_group_id  = dependency.eks.outputs.cluster_primary_security_group_id
-  cluster_iam_role_arn               = dependency.eks.outputs.cluster_iam_role_arn
 
   cluster_name = "eks-${local.env}-${local.region_tag[local.region]}"
   region       = local.region
   region_tag   = local.region_tag
   env          = local.env
 
-  instance_types  = ["m1.small"] #, "m6g.large"]
-  ebs_volume_size = 10
-  ebs_volume_type = "gp3"
+  instance_types = ["m1.small"] #, "m6g.large"]
   self_managed_node_groups = {
     "m1.small" = {
       name          = "${local.env}-m1small"
@@ -111,6 +121,19 @@ inputs = {
       EOT
       bootstrap_extra_args     = "--kubelet-extra-args '--node-labels=env=${local.env},self-managed-node=true,region=ue1,k8s_namespace=${local.env}  --register-with-taints=${local.env}-only=true:PreferNoSchedule'" # for self-managed nodes, taints and labels work only with extra-arg, not ASG tags. Ref: https://aws.amazon.com/blogs/opensource/improvements-eks-worker-node-provisioning/
 
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = 10
+            volume_type           = "gp3"
+            encrypted             = true
+            kms_key_id            = dependency.eks-workers-ebs-encryption.outputs.cluster_workers_ebs_kms_arn
+            delete_on_termination = true
+          }
+        }
+      }
+
       tags = {
         "self-managed-node"                 = "true"
         "k8s.io/cluster-autoscaler/enabled" = "true" # need this tag so clusterautoscaler auto-discovers node group: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md
@@ -130,6 +153,28 @@ inputs = {
   }
 }
 
+# ref: https://github.com/gruntwork-io/terragrunt/issues/1822
+# generate "provider-local" {
+#   path      = "provider-local.tf"
+#   if_exists = "overwrite_terragrunt"
+#   contents  = <<EOF
+
+#     data "aws_eks_cluster" "eks" {
+#         name = "${local.cluster_name}"
+#     }
+
+#     data "aws_eks_cluster_auth" "eks" {
+#         name = "${local.cluster_name}"
+#     }
+
+#     provider "kubernetes" {
+#         host                   = data.aws_eks_cluster.eks.endpoint
+#         cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
+#         token                  = data.aws_eks_cluster_auth.eks.token
+#     }
+# EOF
+# }
+
 generate "provider-local" {
   path      = "provider-local.tf"
   if_exists = "overwrite_terragrunt"
@@ -137,14 +182,14 @@ generate "provider-local" {
     # In case of not creating the cluster, this will be an incompletely configured, unused provider, which poses no problem.
     # ref: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/v12.1.0/README.md#conditional-creation, https://github.com/terraform-aws-modules/terraform-aws-eks/issues/911
     provider "kubernetes" {
-      host                   = local.cluster_endpoint
-      cluster_ca_certificate = base64decode(local.cluster_certificate_authority_data)
+      host                   = "${dependency.eks.outputs.cluster_endpoint}"
+      cluster_ca_certificate = base64decode("${dependency.eks.outputs.cluster_certificate_authority_data}")
 
       exec {
         api_version = "client.authentication.k8s.io/v1beta1"
         command     = "aws"
         # This requires the awscli to be installed locally where Terraform is executed
-        args = ["eks", "get-token", "--cluster-name", local.cluster_name]
+        args = ["eks", "get-token", "--cluster-name", "${local.cluster_name}"]
       }
     }
 EOF

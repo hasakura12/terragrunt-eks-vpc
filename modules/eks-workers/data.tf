@@ -1,24 +1,4 @@
 locals {
-  ########################################
-  ##  KMS for EKS node's EBS volume
-  ########################################
-  eks_node_ebs_kms_key_name                    = "alias/cmk-${var.region_tag[var.region]}-${var.env}-eks-workers-ebs-volume"
-  eks_node_ebs_kms_key_description             = "Kms key used for EKS node's EBS volume"
-  eks_node_ebs_kms_key_deletion_window_in_days = "30"
-
-  block_device_mappings = {
-    xvda = {
-      device_name = "/dev/xvda"
-      ebs = {
-        volume_size           = var.ebs_volume_size
-        volume_type           = var.ebs_volume_type
-        encrypted             = true
-        kms_key_id            = aws_kms_key.eks_worker_ebs.arn
-        delete_on_termination = true
-      }
-    }
-  }
-
   #   appended_self_managed_node_group_list = [
   #       + {
   #           + ami_id                = "ami-084e4550ac5750077"
@@ -71,9 +51,6 @@ locals {
       #   {
       #     "ami_id" = data.aws_ami.arm64.id
       #   },
-      {
-        "block_device_mappings" = local.block_device_mappings
-      }
     )
   ]
 
@@ -93,81 +70,7 @@ locals {
   final_self_managed_node_groups = zipmap(var.instance_types, local.appended_self_managed_node_group_list)
 }
 
-# current account ID
-data "aws_caller_identity" "this" {}
 data "aws_partition" "current" {}
-
-# ref: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/examples/launch_templates_with_managed_node_groups/disk_encryption_policy.tf
-# This policy is required for the KMS key used for EKS root volumes, so the cluster is allowed to enc/dec/attach encrypted EBS volumes
-data "aws_iam_policy_document" "ebs_decryption" {
-  # Copy of default KMS policy that lets you manage it
-  statement {
-    sid    = "Allow access for Key Administrators"
-    effect = "Allow"
-
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.this.account_id}:root"]
-    }
-
-    actions = [
-      "kms:*"
-    ]
-
-    resources = ["*"]
-  }
-
-  # Required for EKS
-  statement {
-    sid    = "Allow service-linked role use of the CMK"
-    effect = "Allow"
-
-    principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.this.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling", # required for the ASG to manage encrypted volumes for nodes
-        var.cluster_iam_role_arn,
-        "arn:aws:iam::${data.aws_caller_identity.this.account_id}:root", # required for the cluster / persistentvolume-controller to create encrypted PVCs
-      ]
-    }
-
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey"
-    ]
-
-    resources = ["*"]
-  }
-
-  statement {
-    sid    = "Allow attachment of persistent resources"
-    effect = "Allow"
-
-    principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.this.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling", # required for the ASG to manage encrypted volumes for nodes
-        var.cluster_iam_role_arn,                                                                                                                # required for the cluster / persistentvolume-controller to create encrypted PVCs
-      ]
-    }
-
-    actions = [
-      "kms:CreateGrant"
-    ]
-
-    resources = ["*"]
-
-    condition {
-      test     = "Bool"
-      variable = "kms:GrantIsForAWSResource"
-      values   = ["true"]
-    }
-
-  }
-}
 
 data "aws_ami" "arm64" {
   most_recent = true

@@ -41,6 +41,19 @@ inputs = {
       EOT
       bootstrap_extra_args     = "--kubelet-extra-args '--node-labels=env=${local.env},self-managed-node=true,region=ue1,k8s_namespace=${local.env}  --register-with-taints=${local.env}-only=true:PreferNoSchedule'" # for self-managed nodes, taints and labels work only with extra-arg, not ASG tags. Ref: https://aws.amazon.com/blogs/opensource/improvements-eks-worker-node-provisioning/
 
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = var.ebs_volume_size
+            volume_type           = var.ebs_volume_type
+            encrypted             = true
+            kms_key_id            = aws_kms_key.eks_worker_ebs.arn
+            delete_on_termination = true
+          }
+        }
+      }
+
       tags = {
         "self-managed-node"                 = "true"
         "k8s.io/cluster-autoscaler/enabled" = "true" # need this tag so clusterautoscaler auto-discovers node group: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md
