@@ -68,9 +68,9 @@ locals {
     for self_managed_node_group in var.self_managed_node_groups :
     merge(
       self_managed_node_group,
-    #   {
-    #     "ami_id" = data.aws_ami.arm64.id
-    #   },
+      #   {
+      #     "ami_id" = data.aws_ami.arm64.id
+      #   },
       {
         "block_device_mappings" = local.block_device_mappings
       }
@@ -150,7 +150,7 @@ data "aws_iam_policy_document" "ebs_decryption" {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::${data.aws_caller_identity.this.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling", # required for the ASG to manage encrypted volumes for nodes
-        var.cluster_iam_role_arn,                                                                                                 # required for the cluster / persistentvolume-controller to create encrypted PVCs
+        var.cluster_iam_role_arn,                                                                                                                # required for the cluster / persistentvolume-controller to create encrypted PVCs
       ]
     }
 

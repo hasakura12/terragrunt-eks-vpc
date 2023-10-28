@@ -27,11 +27,11 @@ variable "instance_types" {
 }
 
 variable "ebs_volume_size" {
-  default     = "5"
+  default = "5"
 }
 
 variable "ebs_volume_type" {
-  default     = "gp3"
+  default = "gp3"
 }
 
 ###############################################################################

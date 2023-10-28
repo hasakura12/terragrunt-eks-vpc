@@ -18,7 +18,7 @@ locals {
 
 inputs = {
   # override _envcommon/eks-workers.hcl 
-  instance_types  = ["c1.medium"] #, "m6g.large"]
+  instance_types = ["c1.medium"] #, "m6g.large"]
   self_managed_node_groups = {
     "c1.medium" = {
       name          = "${local.env}-c1medium"
