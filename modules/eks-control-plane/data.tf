@@ -72,7 +72,7 @@ data "aws_iam_policy_document" "k8s_api_server_decryption" {
     principals {
       type = "AWS"
       identifiers = [
-        aws_iam_role.cluster.arn, # required for the cluster / persistentvolume-controller to create encrypted PVCs
+        aws_iam_role.cluster.arn, # circular dependency with EKS cluster, and EKS cluster requiring KMS key ARN for secret encryption # required for the cluster / persistentvolume-controller to create encrypted PVCs
       ]
     }
 
