@@ -58,6 +58,7 @@ dependency "eks" {
     cluster_endpoint                   = "dummy"
     cluster_certificate_authority_data = "dummy"
     cluster_primary_security_group_id  = "sg-"
+    cluster_iam_role_arn               = "dummy"
   }
 
   mock_outputs_allowed_terraform_commands = ["plan", "validate"]
@@ -78,13 +79,16 @@ inputs = {
   cluster_endpoint                   = dependency.eks.outputs.cluster_endpoint
   cluster_certificate_authority_data = dependency.eks.outputs.cluster_certificate_authority_data
   cluster_primary_security_group_id  = dependency.eks.outputs.cluster_primary_security_group_id
+  cluster_iam_role_arn               = dependency.eks.outputs.cluster_iam_role_arn
 
   cluster_name = "eks-${local.env}-${local.region_tag[local.region]}"
   region       = local.region
   region_tag   = local.region_tag
   env          = local.env
 
-  instance_types = ["m1.small"] #, "m6g.large"]
+  instance_types  = ["m1.small"] #, "m6g.large"]
+  ebs_volume_size = 10
+  ebs_volume_type = "gp3"
   self_managed_node_groups = {
     "m1.small" = {
       name          = "${local.env}-m1small"

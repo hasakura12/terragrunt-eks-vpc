@@ -25,6 +25,12 @@ variable "cluster_primary_security_group_id" {
   default     = ""
 }
 
+# for EBS encrypt/decrypt IAM policy
+variable "cluster_iam_role_arn" {
+  description = "IAM role ARN of the EKS cluster"
+  default = ""
+}
+
 variable "vpc_id" {
   type        = string
   description = "VPC ID for the cluster"

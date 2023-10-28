@@ -3,6 +3,89 @@
 ```sh
 Terraform will perform the following actions:
 
+  # aws_kms_alias.eks_worker_ebs will be created
+  + resource "aws_kms_alias" "eks_worker_ebs" {
+      + arn            = (known after apply)
+      + id             = (known after apply)
+      + name           = "alias/cmk-ue1-dev-eks-workers-ebs-volume"
+      + name_prefix    = (known after apply)
+      + target_key_arn = (known after apply)
+      + target_key_id  = (known after apply)
+    }
+
+  # aws_kms_key.eks_worker_ebs will be created
+  + resource "aws_kms_key" "eks_worker_ebs" {
+      + arn                                = (known after apply)
+      + bypass_policy_lockout_safety_check = false
+      + customer_master_key_spec           = "SYMMETRIC_DEFAULT"
+      + deletion_window_in_days            = 30
+      + description                        = "Kms key used for EKS node's EBS volume"
+      + enable_key_rotation                = true
+      + id                                 = (known after apply)
+      + is_enabled                         = true
+      + key_id                             = (known after apply)
+      + key_usage                          = "ENCRYPT_DECRYPT"
+      + multi_region                       = (known after apply)
+      + policy                             = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "kms:*"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + AWS = "arn:aws:iam::266981300450:root"
+                        }
+                      + Resource  = "*"
+                      + Sid       = "Allow access for Key Administrators"
+                    },
+                  + {
+                      + Action    = [
+                          + "kms:ReEncrypt*",
+                          + "kms:GenerateDataKey*",
+                          + "kms:Encrypt",
+                          + "kms:DescribeKey",
+                          + "kms:Decrypt",
+                        ]
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + AWS = [
+                              + "arn:aws:iam::266981300450:root",
+                              + "arn:aws:iam::266981300450:role/eks-cluster-control-plane",
+                              + "arn:aws:iam::266981300450:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling",
+                            ]
+                        }
+                      + Resource  = "*"
+                      + Sid       = "Allow service-linked role use of the CMK"
+                    },
+                  + {
+                      + Action    = "kms:CreateGrant"
+                      + Condition = {
+                          + Bool = {
+                              + "kms:GrantIsForAWSResource" = "true"
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + AWS = [
+                              + "arn:aws:iam::266981300450:role/eks-cluster-control-plane",
+                              + "arn:aws:iam::266981300450:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling",
+                            ]
+                        }
+                      + Resource  = "*"
+                      + Sid       = "Allow attachment of persistent resources"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + tags_all                           = {
+          + "App"        = "terragrunt-eks-vpc"
+          + "Env"        = "dev"
+          + "Region"     = "us-east-1"
+          + "Region_Tag" = "ue1"
+        }
+    }
+
   # aws_security_group.node[0] will be created
   + resource "aws_security_group" "node" {
       + arn                    = (known after apply)
@@ -442,12 +525,15 @@ Terraform will perform the following actions:
         }
     }
 
-Plan: 19 to add, 0 to change, 0 to destroy.
+Plan: 21 to add, 0 to change, 0 to destroy.
 
 Changes to Outputs:
-  + node_security_group_arn  = (known after apply)
-  + node_security_group_id   = (known after apply)
-  + self_managed_node_groups = {
+  + cluster_workers_ebs_alias_arn = (known after apply)
+  + cluster_workers_ebs_id        = (known after apply)
+  + cluster_workers_ebs_kms_arn   = (known after apply)
+  + node_security_group_arn       = (known after apply)
+  + node_security_group_id        = (known after apply)
+  + self_managed_node_groups      = {
       + "c1.medium" = {
           + cluster_workers_autoscaling_group_arn                       = (known after apply)
           + cluster_workers_autoscaling_group_availability_zones        = (known after apply)

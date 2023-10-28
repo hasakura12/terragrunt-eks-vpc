@@ -16,18 +16,6 @@ variable "platform" {
   default     = "linux"
 }
 
-variable "self_managed_node_groups" {
-  description = "Map of self-managed node group definitions to create"
-  type        = any
-  default     = {}
-}
-
-variable "instance_types" {
-  description = "List of EKS worker nodes instance types"
-  type        = list(any)
-  default     = []
-}
-
 ################################################################################
 # User Data
 ################################################################################
