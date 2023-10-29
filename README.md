@@ -192,6 +192,30 @@ Refs:
         - Practice security game days
         - Run penetration tests against your cluster
 - Image Security
+        - Create minimal images
+        - Use multi-stage builds
+        - Create Software Bill of Materials (SBOMs) for your container image
+        - Scan images for vulnerabilities regularly
+                - Grype
+                - Palo Alto - Prisma Cloud (twistcli)
+                - Aqua
+                - Kubei
+                - Trivy
+                - Snyk
+        - Use attestations to validate artifact integrity
+        - Create IAM policies for ECR repositories
+        - Consider using ECR private endpoints
+        - Implement endpoint policies for ECR
+        - Implement lifecycle policies for ECR
+        - Create a set of curated images
+        - Add the USER directive to your Dockerfiles to run as a non-root user
+        - Lint your Dockerfiles
+        - Build images from Scratch
+        - Use immutable tags with ECR
+        - Sign your images, SBOMs, pipeline runs and vulnerability reports
+        - Image integrity verification using Kubernetes admission controller
+        - Update the packages in your container images
+
 
 ## Linting & Git Pre Commit Hooks using Husky
 Ref: https://www.npmjs.com/package/husky
