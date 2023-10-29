@@ -138,59 +138,7 @@ inputs = {
         "self-managed-node"                 = true
         "k8s.io/cluster-autoscaler/enabled" = true # need this tag so clusterautoscaler auto-discovers node group: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md
         "k8s_namespace"                     = local.env
-        # {
-        #   "key"                 = "k8s.io/cluster-autoscaler/node-template/label/env"  # labels and taints won't be propagated to nodes for unmanaged node group. Refs: https://github.com/kubernetes/autoscaler/issues/1793#issuecomment-517417680, https://github.com/kubernetes/autoscaler/issues/2434#issuecomment-576479025
-        #   "propagate_at_launch" = "true"
-        #   "value"               = "staging"
-        # },
-        # {
-        #   "key"                 = "k8s.io/cluster-autoscaler/node-template/taint/staging-only"
-        #   "propagate_at_launch" = "true"
-        #   "value"               = "true:PreferNoSchedule"
-        # },
       }
     },
   }
-}
-
-# ref: https://github.com/gruntwork-io/terragrunt/issues/1822
-# generate "provider-local" {
-#   path      = "provider-local.tf"
-#   if_exists = "overwrite_terragrunt"
-#   contents  = <<EOF
-
-#     data "aws_eks_cluster" "eks" {
-#         name = "${local.cluster_name}"
-#     }
-
-#     data "aws_eks_cluster_auth" "eks" {
-#         name = "${local.cluster_name}"
-#     }
-
-#     provider "kubernetes" {
-#         host                   = data.aws_eks_cluster.eks.endpoint
-#         cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
-#         token                  = data.aws_eks_cluster_auth.eks.token
-#     }
-# EOF
-# }
-
-generate "provider-local" {
-  path      = "provider-local.tf"
-  if_exists = "overwrite_terragrunt"
-  contents  = <<EOF
-    # In case of not creating the cluster, this will be an incompletely configured, unused provider, which poses no problem.
-    # ref: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/v12.1.0/README.md#conditional-creation, https://github.com/terraform-aws-modules/terraform-aws-eks/issues/911
-    provider "kubernetes" {
-      host                   = "${dependency.eks.outputs.cluster_endpoint}"
-      cluster_ca_certificate = base64decode("${dependency.eks.outputs.cluster_certificate_authority_data}")
-
-      exec {
-        api_version = "client.authentication.k8s.io/v1beta1"
-        command     = "aws"
-        # This requires the awscli to be installed locally where Terraform is executed
-        args = ["eks", "get-token", "--cluster-name", "${local.cluster_name}"]
-      }
-    }
-EOF
 }
