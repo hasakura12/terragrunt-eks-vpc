@@ -32,6 +32,8 @@ locals {
   region       = local.region_vars.locals.region
   region_tag   = local.region_vars.locals.region_tag
 
+  cluster_name = "eks-${local.env}-${local.region_tag[local.region]}" # use "expose = true" in child config to expose this
+
   # Expose the base source URL so different versions of the module can be deployed in different environments. This will
   # be used to construct the terraform block in the child terragrunt configurations.
   base_source_url = "../../..//modules/eks-control-plane" # relative path from execution dir
@@ -91,4 +93,23 @@ inputs = {
   cluster_version                = 1.28
   cluster_endpoint_public_access = true # need this otherwise can't access EKS from outside VPC. Ref: https://github.com/terraform-aws-modules/terraform-aws-eks#input_cluster_endpoint_public_access
   enabled_cluster_log_types      = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+}
+
+# this needs to be generated, otherwise will get "Error: Post "http://localhost/api/v1/namespaces/kube-system/configmaps": dial tcp 127.0.0.1:80: connect: connection refused" because without k8s provider config, it'll default to connecting to localhost cluster
+# ref: https://github.com/gruntwork-io/terragrunt/issues/1822
+generate "provider-k8s-local" {
+  path      = "provider-k8s-local.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<EOF
+    provider "kubernetes" {
+        host                   = aws_eks_cluster.this.cluster_endpoint
+        cluster_ca_certificate = base64decode(aws_eks_cluster.this.cluster_certificate_authority_data)
+        exec {
+           api_version = "client.authentication.k8s.io/v1beta1"
+           command     = "aws"
+           # This requires the awscli to be installed locally where Terraform is executed
+           args = ["eks", "get-token", "--cluster-name", "${local.cluster_name}"]
+      }
+    }
+EOF
 }
