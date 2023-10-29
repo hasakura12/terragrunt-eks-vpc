@@ -16,6 +16,11 @@ output "cluster_arn" {
   value       = aws_eks_cluster.this.arn
 }
 
+output "cluster_oidc_issuer_url" {
+  description = "The URL on the EKS cluster for the OpenID Connect identity provider"
+  value       = try(aws_eks_cluster.this.identity[0].oidc[0].issuer, null)
+}
+
 output "cluster_endpoint" {
   description = "The endpoint for your EKS Kubernetes API."
   value       = aws_eks_cluster.this.endpoint

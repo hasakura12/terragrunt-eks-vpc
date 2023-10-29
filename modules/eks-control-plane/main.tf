@@ -68,7 +68,6 @@ resource "aws_security_group" "cluster" {
   }
 }
 
-
 ########################################
 ## KMS for K8s secret's DEK (data encryption key) encryption
 ########################################
