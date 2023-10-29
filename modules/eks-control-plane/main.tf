@@ -23,7 +23,7 @@ resource "aws_eks_cluster" "this" {
   depends_on = [
     aws_iam_role_policy_attachment.EKSClusterPolicy,
     aws_iam_role_policy_attachment.EKSVPCResourceController,
-    aws_cloudwatch_log_group.cluster,
+    var.cluster_cloudwatch_logs_arn # can't reference non-submodule module (upper level), so use var. Ref: https://stackoverflow.com/a/58277124
   ]
 }
 
@@ -99,14 +99,4 @@ resource "aws_kms_key" "k8s_secret" {
 resource "aws_kms_alias" "k8s_secret" {
   name          = local.k8s_secret_kms_key_name
   target_key_id = aws_kms_key.k8s_secret.key_id
-}
-
-########################################
-## CloudWatch Logs for EKS control plane logging
-########################################
-resource "aws_cloudwatch_log_group" "cluster" {
-  # The log group name format is /aws/eks/<cluster-name>/cluster
-  # Reference: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html
-  name              = "/aws/eks/${var.cluster_name}/cluster"
-  retention_in_days = var.cluster_log_retention_in_days
 }

@@ -81,10 +81,3 @@ output "cluster_secret_id" {
   description = "The globally unique identifier for the key."
   value       = aws_kms_key.k8s_secret.id
 }
-
-########################################
-## CloudWatch Logs for EKS control plane logging
-########################################
-output "cluster_cloudwatch_logs_arn" {
-  value = aws_cloudwatch_log_group.cluster.arn
-}

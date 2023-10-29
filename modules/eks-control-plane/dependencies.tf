@@ -10,3 +10,7 @@ variable "private_subnets" {
   description = "List of subnets for cluster worker nodes"
   default     = []
 }
+
+variable "cluster_cloudwatch_logs_arn" {
+  default = ""
+}

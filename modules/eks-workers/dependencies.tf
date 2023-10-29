@@ -1,9 +1,3 @@
-variable "cluster_name" {
-  description = "Name of the EKS cluster"
-  type        = string
-  default     = ""
-}
-
 variable "cluster_version" {
   description = "Kubernetes cluster version - used to lookup default AMI ID if one is not provided"
   type        = string

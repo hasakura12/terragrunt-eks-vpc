@@ -20,6 +20,12 @@ variable "env" {
   description = "env"
 }
 
+variable "cluster_name" {
+  description = "Name of the EKS cluster"
+  type        = string
+  default     = ""
+}
+
 variable "instance_types" {
   description = "List of EKS worker nodes instance types"
   type        = list(any)

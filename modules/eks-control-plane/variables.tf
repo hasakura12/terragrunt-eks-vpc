@@ -41,8 +41,3 @@ variable "enabled_cluster_log_types" {
   type        = list(string)
 }
 
-variable "cluster_log_retention_in_days" {
-  default     = 90
-  description = "Number of days to retain log events. Default retention - 90 days."
-  type        = number
-}

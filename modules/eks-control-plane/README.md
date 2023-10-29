@@ -75,22 +75,6 @@ Terraform will perform the following actions:
         }
     }
 
-  # aws_cloudwatch_log_group.cluster will be created
-  + resource "aws_cloudwatch_log_group" "cluster" {
-      + arn               = (known after apply)
-      + id                = (known after apply)
-      + name              = "/aws/eks/eks-dev-ue1/cluster"
-      + name_prefix       = (known after apply)
-      + retention_in_days = 7
-      + skip_destroy      = false
-      + tags_all          = {
-          + "App"        = "terragrunt-eks-vpc"
-          + "Env"        = "dev"
-          + "Region"     = "us-east-1"
-          + "Region_Tag" = "ue1"
-        }
-    }
-
   # aws_eks_cluster.this will be created
   + resource "aws_eks_cluster" "this" {
       + arn                       = (known after apply)
@@ -245,12 +229,11 @@ Terraform will perform the following actions:
       + vpc_id                 = "vpc-02de7e4cf2abfbd86"
     }
 
-Plan: 8 to add, 0 to change, 0 to destroy.
+Plan: 7 to add, 0 to change, 0 to destroy.
 
 Changes to Outputs:
   + cluster_arn                        = (known after apply)
   + cluster_certificate_authority_data = (known after apply)
-  + cluster_cloudwatch_logs_arn        = (known after apply)
   + cluster_endpoint                   = (known after apply)
   + cluster_iam_role_arn               = (known after apply)
   + cluster_iam_role_name              = "eks-cluster-control-plane"
@@ -258,6 +241,7 @@ Changes to Outputs:
   + cluster_id                         = (known after apply)
   + cluster_name                       = "eks-dev-ue1"
   + cluster_platform_version           = (known after apply)
+  + cluster_primary_security_group_id  = (known after apply)
   + cluster_secret_alias_arn           = (known after apply)
   + cluster_secret_id                  = (known after apply)
   + cluster_secret_kms_arn             = (known after apply)

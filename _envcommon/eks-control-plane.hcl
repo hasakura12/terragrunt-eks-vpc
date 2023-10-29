@@ -33,7 +33,7 @@ locals {
 
 # explicitly define dependency. Ref: https://terragrunt.gruntwork.io/docs/features/execute-terraform-commands-on-multiple-modules-at-once/#dependencies-between-modules
 dependencies {
-  paths = ["../vpc"]
+  paths = ["../vpc", "../eks-control-plane-logs"]
 }
 
 dependency "vpc" {
@@ -44,6 +44,18 @@ dependency "vpc" {
     vpc_id          = "vpc-"
     private_subnets = ["subnet1", "subnet2", "subnet3", "subnet4"]
     azs             = ["az1a", "az1b", "az1c", "az1d"]
+  }
+
+  mock_outputs_allowed_terraform_commands = ["plan", "validate"]
+  mock_outputs_merge_strategy_with_state  = "shallow" # merge the mocked outputs and the state outputs
+}
+
+dependency "eks-control-plane-logs" {
+  config_path = "../eks-control-plane-logs"
+
+  # ref: https://terragrunt.gruntwork.io/docs/features/execute-terraform-commands-on-multiple-modules-at-once/#unapplied-dependency-and-mock-outputs
+  mock_outputs = {
+    cluster_cloudwatch_logs_arn = "dummy"
   }
 
   mock_outputs_allowed_terraform_commands = ["plan", "validate"]
@@ -64,13 +76,13 @@ inputs = {
   # note: if dependent module "vpc" hasn't been deployed, "terragrunt plan" will error out "Either the target module has not been applied yet, or the module has no outputs"
   # ref: "If module A depends on module B and module B hasn’t been applied yet, then run-all plan will show the plan for B, but exit with an error when trying to show the plan for A"
   # ref: https://github.com/gruntwork-io/terragrunt/issues/1330#issuecomment-1589092127
-  vpc_id          = dependency.vpc.outputs.vpc_id
-  private_subnets = dependency.vpc.outputs.private_subnets
-  azs             = dependency.vpc.outputs.azs
+  vpc_id                      = dependency.vpc.outputs.vpc_id
+  private_subnets             = dependency.vpc.outputs.private_subnets
+  azs                         = dependency.vpc.outputs.azs
+  cluster_cloudwatch_logs_arn = dependency.eks-control-plane-logs.outputs.cluster_cloudwatch_logs_arn
 
   create_eks                     = true
   cluster_version                = 1.28
   cluster_endpoint_public_access = true # need this otherwise can't access EKS from outside VPC. Ref: https://github.com/terraform-aws-modules/terraform-aws-eks#input_cluster_endpoint_public_access
   enabled_cluster_log_types      = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-  cluster_log_retention_in_days  = 7
 }
