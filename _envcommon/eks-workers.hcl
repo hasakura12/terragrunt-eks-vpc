@@ -101,6 +101,7 @@ inputs = {
   # ref: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/examples/self_managed_node_group/main.tf#L66-L72
   self_managed_node_group_defaults = {
     # enable discovery of autoscaling groups by cluster-autoscaler: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md
+    # NOTE: can't use resource "aws_autoscaling_group_tag" to edit tags at runtime like this example (https://github.com/particuleio/teks/blob/main/terragrunt/snippets/eks-asg-tags/eks-asg-tags.tf#L91-L103), since self-managed-node-group is adding tags in resource "autoscaling_group". Ref: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group_tag
     autoscaling_group_tags = {
       "k8s.io/cluster-autoscaler/enabled" : true,
       "k8s.io/cluster-autoscaler/${local.cluster_name}" : "owned",
