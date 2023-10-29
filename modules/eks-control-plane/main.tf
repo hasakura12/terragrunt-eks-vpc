@@ -68,30 +68,6 @@ resource "aws_security_group" "cluster" {
   }
 }
 
-# create this in EKS worker group module
-# resource "aws_security_group_rule" "ingress_nodes_443" {
-#   type        = "ingress"
-#   description = "Node groups to cluster API"
-#   from_port   = 443
-#   to_port     = 443
-#   protocol    = "tcp"
-#   #   cidr_blocks       = aws_vpc.example.cidr_block
-#   source_security_group_id = var.node_security_group # dependency
-#   security_group_id        = aws_security_group.cluster.id
-# }
-
-# # create this in EKS worker group module
-# resource "aws_security_group_rule" "ingress_nodes_ephemeral_ports_tcp" {
-#   type        = "ingress"
-#   description = "Nodes on ephemeral ports"
-#   from_port   = 1025
-#   to_port     = 65535
-#   protocol    = "tcp"
-#   #   cidr_blocks       = aws_vpc.example.cidr_block
-#   source_security_group_id = var.node_security_group # dependency
-#   security_group_id        = aws_security_group.cluster.id
-# }
-
 
 ########################################
 ## KMS for K8s secret's DEK (data encryption key) encryption

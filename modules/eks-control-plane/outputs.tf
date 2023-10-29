@@ -46,6 +46,20 @@ output "cluster_primary_security_group_id" {
   value       = try(aws_eks_cluster.this.vpc_config[0].cluster_security_group_id, null)
 }
 
+################################################################################
+# Cluster Security Group
+################################################################################
+
+output "cluster_security_group_arn" {
+  description = "Amazon Resource Name (ARN) of the cluster security group"
+  value       = try(aws_security_group.cluster.arn, null)
+}
+
+output "cluster_security_group_id" {
+  description = "ID of the cluster security group"
+  value       = try(aws_security_group.cluster.id, null)
+}
+
 ########################################
 ## IAM role for EKS Cluster Control Plane
 ########################################
