@@ -45,6 +45,34 @@ terragrunt run-all validate
 terragrunt run-all plan # terragrunt plan-all is being deprecated
 ```
 
+# Dependency Order
+```sh
+$ tg run-all init
+INFO[0000] The stack at terragrunt-eks-vpc/ue1/dev will be processed in the following order for command init:
+Group 1
+- Module terragrunt-eks-vpc/ue1/dev/eks-control-plane-logs
+- Module terragrunt-eks-vpc/ue1/dev/eks-workers-ami-arm64
+- Module terragrunt-eks-vpc/ue1/dev/eks-workers-ssh-keypair
+- Module terragrunt-eks-vpc/ue1/dev/vpc
+
+Group 2
+- Module terragrunt-eks-vpc/ue1/dev/eks-control-plane
+- Module terragrunt-eks-vpc/ue1/dev/eks-fargate
+
+Group 3
+- Module terragrunt-eks-vpc/ue1/dev/eks-addons
+- Module terragrunt-eks-vpc/ue1/dev/eks-irsa
+- Module terragrunt-eks-vpc/ue1/dev/eks-workers-ebs-encryption
+
+Group 4
+- Module terragrunt-eks-vpc/ue1/dev/eks-cluster-autoscaler-irsa
+- Module terragrunt-eks-vpc/ue1/dev/eks-workers
+
+Group 5
+- Module terragrunt-eks-vpc/ue1/dev/eks-aws-auth
+- Module terragrunt-eks-vpc/ue1/dev/eks-control-plane-sg
+```
+
 ## EKS Module Design (DRY) by Gruntwork 
 - https://docs.dogfood-stage.com/reference/modules/terraform-aws-eks/eks-cluster-workers/
 - https://medium.com/@iangrunt/a-visual-checklist-for-writing-production-grade-terraform-modules-42f092fa7071
