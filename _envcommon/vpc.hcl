@@ -26,6 +26,8 @@ locals {
   region       = local.region_vars.locals.region
   region_tag   = local.region_vars.locals.region_tag
 
+  cluster_name = "eks-${local.env}-${local.region_tag[local.region]}" # use "expose = true" in child config to expose this
+
   # Expose the base source URL so different versions of the module can be deployed in different environments. This will
   # be used to construct the terraform block in the child terragrunt configurations.
   base_source_url = "../../..//modules/vpc" # relative path from execution dir
@@ -56,10 +58,12 @@ inputs = {
   enable_vpn_gateway                   = false
 
   public_subnet_tags = {
-    Name = "vpc-${local.env}-${local.region_tag[local.region]}-${local.account_name}-public"
+    "Tier" = "public"
   }
-
   private_subnet_tags = {
-    Name = "vpc-${local.env}-${local.region_tag[local.region]}-${local.account_name}-private"
+    "Tier" = "private"
+  }
+  database_subnet_tags = {
+    "Tier" = "database"
   }
 }
