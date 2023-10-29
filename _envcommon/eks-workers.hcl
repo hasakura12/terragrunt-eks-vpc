@@ -135,9 +135,9 @@ inputs = {
       }
 
       tags = {
-        "self-managed-node"                 = "true"
-        "k8s.io/cluster-autoscaler/enabled" = "true" # need this tag so clusterautoscaler auto-discovers node group: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md
-        "k8s_namespace"                     = "${local.env}"
+        "self-managed-node"                 = true
+        "k8s.io/cluster-autoscaler/enabled" = true # need this tag so clusterautoscaler auto-discovers node group: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md
+        "k8s_namespace"                     = local.env
         # {
         #   "key"                 = "k8s.io/cluster-autoscaler/node-template/label/env"  # labels and taints won't be propagated to nodes for unmanaged node group. Refs: https://github.com/kubernetes/autoscaler/issues/1793#issuecomment-517417680, https://github.com/kubernetes/autoscaler/issues/2434#issuecomment-576479025
         #   "propagate_at_launch" = "true"

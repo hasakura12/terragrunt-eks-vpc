@@ -45,19 +45,19 @@ inputs = {
         xvda = {
           device_name = "/dev/xvda"
           ebs = {
-            volume_size           = var.ebs_volume_size
-            volume_type           = var.ebs_volume_type
+            volume_size           = 10
+            volume_type           = "gp3"
             encrypted             = true
-            kms_key_id            = aws_kms_key.eks_worker_ebs.arn
+            kms_key_id            = dependency.eks-workers-ebs-encryption.outputs.cluster_workers_ebs_kms_arn
             delete_on_termination = true
           }
         }
       }
 
       tags = {
-        "self-managed-node"                 = "true"
-        "k8s.io/cluster-autoscaler/enabled" = "true" # need this tag so clusterautoscaler auto-discovers node group: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md
-        "k8s_namespace"                     = "${local.env}"
+        "self-managed-node"                 = true
+        "k8s.io/cluster-autoscaler/enabled" = true # need this tag so clusterautoscaler auto-discovers node group: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md
+        "k8s_namespace"                     = local.env
       }
     },
   }
