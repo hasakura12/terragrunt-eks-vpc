@@ -59,7 +59,7 @@ inputs = {
       bootstrap_extra_args     = "--kubelet-extra-args '--node-labels=env=${local.env},self-managed-node=true,region=ue1,k8s_namespace=${local.env}  --register-with-taints=${local.env}-only=true:PreferNoSchedule'" # for self-managed nodes, taints and labels work only with extra-arg, not ASG tags. Ref: https://aws.amazon.com/blogs/opensource/improvements-eks-worker-node-provisioning/
 
       block_device_mappings = {
-        xvda = {
+        root = {
           device_name = "/dev/xvda"
           ebs = {
             volume_size           = 10
