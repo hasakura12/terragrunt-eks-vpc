@@ -24,7 +24,7 @@ locals {
   account_name = local.account_vars.locals.account_name
   env          = local.environment_vars.locals.env
   region       = local.region_vars.locals.region
-  region_short = local.region_vars.locals.region_short
+  region_tag   = local.region_vars.locals.region_tag
 
   # Expose the base source URL so different versions of the module can be deployed in different environments. This will
   # be used to construct the terraform block in the child terragrunt configurations.
