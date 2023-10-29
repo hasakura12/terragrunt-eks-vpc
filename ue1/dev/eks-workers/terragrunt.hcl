@@ -16,6 +16,22 @@ locals {
   env              = local.environment_vars.locals.env
 }
 
+# explicitly define dependency. Ref: https://terragrunt.gruntwork.io/docs/features/execute-terraform-commands-on-multiple-modules-at-once/#dependencies-between-modules
+dependencies {
+  paths = ["../vpc", "../eks-control-plane", "../eks-workers-ebs-encryption", "../eks-workers-ami-arm64"]
+}
+
+dependency "eks-workers-ami-arm64" {
+  config_path = "../eks-workers-ami-arm64"
+
+  mock_outputs = {
+    ami_id = "dummy"
+  }
+
+  mock_outputs_allowed_terraform_commands = ["plan", "validate"]
+  mock_outputs_merge_strategy_with_state  = "shallow" # merge the mocked outputs and the state outputs
+}
+
 inputs = {
   # override _envcommon/eks-workers.hcl 
   instance_types = ["c1.medium"] #, "m6g.large"]
@@ -23,6 +39,7 @@ inputs = {
     "c1.medium" = {
       name          = "${local.env}-c1medium"
       instance_type = "c1.medium" # since we are using AWS-VPC-CNI, allocatable pod IPs are defined by instance size: https://docs.google.com/spreadsheets/d/1MCdsmN7fWbebscGizcK6dAaPGS-8T_dYxWp0IdwkMKI/edit#gid=1549051942, https://github.com/awslabs/amazon-eks-ami/blob/master/files/eni-max-pods.txt
+      # ami_id        = dependency.eks-workers-ami-arm64.outputs.aws_ami_id
       max_size      = 1
       desired_size  = 1 # this will be ignored if cluster autoscaler is enabled: asg_desired_capacity: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md#notes
 

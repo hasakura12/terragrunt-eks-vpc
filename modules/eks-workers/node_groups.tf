@@ -237,7 +237,7 @@ resource "aws_security_group_rule" "node" {
 module "self_managed_node_group" {
   source = "./self-managed-node-group"
 
-  for_each = { for k, v in local.final_self_managed_node_groups : k => v if var.create }
+  for_each = { for k, v in var.self_managed_node_groups : k => v if var.create }
 
   create = try(each.value.create, true)
 
