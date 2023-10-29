@@ -4,6 +4,12 @@
 # deployed version.
 terraform {
   source = "${local.base_source_url}"
+
+  # refs: https://terragrunt.gruntwork.io/docs/features/hooks/#before-and-after-hooks, https://github.com/particuleio/teks/blob/main/terragrunt/live/production/eu-west-1/clusters/demo/eks/terragrunt.hcl#L31
+  # after_hook "kubeconfig" {
+  #   commands = ["apply"]
+  #   execute  = ["bash", "-c", "aws eks update-kubeconfig --name ${include.root.locals.full_name} --kubeconfig ${get_terragrunt_dir()}/kubeconfig 2>/dev/null"]
+  # }
 }
 
 

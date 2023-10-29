@@ -4,6 +4,8 @@ Refs:
 - https://github.com/gruntwork-io/terragrunt-infrastructure-live-example/tree/master
 - https://github.com/gruntwork-io/terragrunt-infrastructure-modules-example/tree/master
 - https://gruntwork.io/repos/v0.0.1-01172020/infrastructure-modules-acme
+- https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/main.tf
+- https://github.com/particuleio/teks/blob/main/terragrunt/live/production/eu-west-1/clusters/demo/eks/terragrunt.hcl
 
 ```sh
 brew install tgenv
