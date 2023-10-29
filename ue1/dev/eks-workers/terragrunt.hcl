@@ -34,7 +34,6 @@ dependency "eks-workers-ami-arm64" {
 
 inputs = {
   # override _envcommon/eks-workers.hcl 
-  instance_types = ["c1.medium"] #, "m6g.large"]
   self_managed_node_groups = {
     "c1.medium" = {
       name          = "${local.env}-c1medium"
@@ -76,6 +75,28 @@ inputs = {
         "k8s.io/cluster-autoscaler/enabled" = true # need this tag so clusterautoscaler auto-discovers node group: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md
         "k8s_namespace"                     = local.env
       }
+    },
+  }
+
+  # Extend node-to-node security group rules
+  # WARNING: need this for metrics-server to work, as well as istio ingress/egress's readiness to work at http://:15021/healthz/ready. Ref: https://github.com/kubernetes-sigs/metrics-server/issues/1024#issuecomment-1124870217
+  # ref: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/examples/complete/main.tf#L98-L117
+  node_security_group_additional_rules = {
+    ingress_self_all = {
+      description = "Node to node all ports/protocols"
+      protocol    = "-1"
+      from_port   = 0
+      to_port     = 0
+      type        = "ingress"
+      self        = true
+    },
+    ingress_cluster_api_ephemeral_ports_tcp = {
+      description                   = "Cluster API to K8S services running on nodes"
+      protocol                      = "tcp"
+      from_port                     = 1025
+      to_port                       = 65535
+      type                          = "ingress"
+      source_cluster_security_group = true
     },
   }
 }

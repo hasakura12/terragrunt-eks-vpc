@@ -10,6 +10,7 @@ resource "aws_security_group_rule" "ingress_nodes_443" {
 }
 
 # ref: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/examples/complete/main.tf#L78-L86
+# WARNING: needs this to allow kubeseal to work. Ref: https://github.com/bitnami-labs/sealed-secrets/issues/699#issuecomment-1064424553
 resource "aws_security_group_rule" "ingress_nodes_ephemeral_ports_tcp" {
   type                     = "ingress"
   description              = "Nodes on ephemeral ports"

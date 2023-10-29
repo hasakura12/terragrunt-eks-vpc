@@ -26,12 +26,6 @@ variable "cluster_name" {
   default     = ""
 }
 
-variable "instance_types" {
-  description = "List of EKS worker nodes instance types"
-  type        = list(any)
-  default     = []
-}
-
 ###############################################################################
 # EKS Cluster
 ################################################################################
