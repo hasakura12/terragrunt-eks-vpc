@@ -98,7 +98,14 @@ inputs = {
   region_tag   = local.region_tag
   env          = local.env
 
-  instance_types = ["m1.small"] #, "m6g.large"]
+  # ref: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/examples/self_managed_node_group/main.tf#L66-L72
+  self_managed_node_group_defaults = {
+    # enable discovery of autoscaling groups by cluster-autoscaler: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md
+    autoscaling_group_tags = {
+      "k8s.io/cluster-autoscaler/enabled" : true,
+      "k8s.io/cluster-autoscaler/${local.cluster_name}" : "owned",
+    }
+  }
   self_managed_node_groups = {
     "m1.small" = {
       name          = "${local.env}-m1small"
@@ -136,7 +143,6 @@ inputs = {
 
       tags = {
         "self-managed-node"                 = true
-        "k8s.io/cluster-autoscaler/enabled" = true # need this tag so clusterautoscaler auto-discovers node group: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md
         "k8s_namespace"                     = local.env
       }
     },

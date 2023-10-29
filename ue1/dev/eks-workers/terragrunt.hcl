@@ -72,7 +72,6 @@ inputs = {
 
       tags = {
         "self-managed-node"                 = true
-        "k8s.io/cluster-autoscaler/enabled" = true # need this tag so clusterautoscaler auto-discovers node group: https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md
         "k8s_namespace"                     = local.env
       }
     },
