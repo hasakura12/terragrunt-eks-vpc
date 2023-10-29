@@ -58,6 +58,141 @@ terragrunt run-all plan # terragrunt plan-all is being deprecated
 
 
 
+# EKS Security Best Practice
+Refs:
+- https://docs.aws.amazon.com/eks/latest/userguide/security-best-practices.html
+- https://aws.github.io/aws-eks-best-practices/security/docs/
+
+- Identity and Access Management
+        - Don't use a service account token for authentication
+        - Employ least privileged access to AWS Resources
+        - Use IAM Roles when multiple users need identical access to the cluster
+        - Employ least privileged access when creating RoleBindings and ClusterRoleBindings
+        - Make the EKS Cluster Endpoint private
+        - Create the cluster with a dedicated IAM role
+        - Use tools to make changes to the aws-auth ConfigMap
+        - Regularly audit access to the cluster
+        - IAM Roles for Service Accounts (IRSA)
+        - Update the aws-node daemonset to use IRSA
+        - Restrict access to the instance profile assigned to the worker node
+        - Scope the IAM Role trust policy for IRSA to the service account name
+        - Disable auto-mounting of service account tokens
+        - Use dedicated service accounts for each application
+        - Run the application as a non-root user
+        - Grant least privileged access to applications
+        - Review and revoke unnecessary anonymous access
+- Pod Security
+        - Linux Capabilities
+        - Node Authorization
+        - Pod Security Standards (PSS)
+        - Policy-as-code (PAC)
+                - OPA/Gatekeeper
+                - Open Policy Agent (OPA)
+                - Kyverno
+                - Kubewarden
+                - jsPolicy
+        - Pod Security Standards (PSS) and Pod Security Admission (PSA)
+        - Do not run processes in containers as root
+        - Never run Docker in Docker or mount the socket in the container
+                - While this conveniently lets you to build/run images in Docker containers, you're basically relinquishing complete control of the node to the process running in the container. If you need to build container images on Kubernetes use Kaniko, buildah, or a build service like CodeBuild instead.
+        - Restrict the use of hostPath or if hostPath is necessary restrict which prefixes can be used and configure the volume as read-only
+        - Set requests and limits for each container to avoid resource contention and DoS attacks
+        - Do not allow privileged escalation
+        - Disable ServiceAccount token mounts
+        - Disable service discovery
+        - Configure your images with read-only root file system
+- Runtime Security
+        - Security contexts and built-in Kubernetes controls
+        - Linux capabilities
+        - Seccomp
+        - AppArmor and SELinux
+        - Use Amazon GuardDuty for runtime monitoring and detecting threats to your EKS environments
+        - Use a 3rd party solution for runtime monitoring (e.g. falco)
+        - Consider add/dropping Linux capabilities before writing seccomp policies
+- Network Security
+        - Network policy
+                - Create a default deny policy
+                - Create a rule to allow DNS queries
+                - Incrementally add rules to selectively allow the flow of traffic between namespaces/pods
+                - Audit Network Policies regularly
+                - Ensure Network Policies exists using Open Policy Agent (OPA)
+        - Monitor the vpc-network-policy-controller, node-agent logs
+        - AWS VPC Flow Logs 
+        - Security groups
+        - Reduce the attack surface
+        - reduce the blast radius
+        - Encryption in transit
+                - Use encryption with AWS Elastic load balancers (ACM Private CA with cert-manager)
+                - Service Mesh Policy Enforcement or Kubernetes network policy
+- Multi-tenancy
+        - Namespaces
+        - Network policies
+        - Role-based access control (RBAC)
+        - Quotas
+        - Pod priority and preemption
+        - Isolating tenant workloads to specific nodes
+                - Part 1 - Node affinity
+                - Part 2 - Taints and tolerations
+                - Part 3 - Policy-based management for node selection
+- Detective Controls
+        - Enable audit logs
+        - Utilize audit metadata
+        - Create alarms for suspicious events
+        - Analyze logs with Log Insights
+        - Audit your CloudTrail logs
+        - Use CloudTrail Insights to unearth suspicious activity
+        - kubeaudit
+        - kube-scan: Assigns a risk score to the workloads running in your cluster in accordance with the Kubernetes Common Configuration Scoring System framework
+        - kubesec.io
+        - polaris
+        - Starboard
+        - Snyk
+        - Kubescape: Kubescape is an open source kubernetes security tool that scans clusters, YAML files, and Helm charts. It detects misconfigurations according to multiple frameworks (including NSA-CISA and MITRE ATT&CK®.)
+- Infrastructure Security
+        - Use an OS optimized for running containers
+        - Keep your worker node OS updated
+        - Treat your infrastructure as immutable and automate the replacement of your worker nodes
+        - Periodically run kube-bench to verify compliance with CIS benchmarks for Kubernetes
+        - Minimize access to worker nodes
+                - Instead of enabling SSH access, use SSM Session Manager when you need to remote into a host
+                - Minimal IAM policy for SSM based SSH Access
+        - Deploy workers onto private subnets
+        - Run Amazon Inspector to assess hosts for exposure, vulnerabilities, and deviations from best practices
+        - Run SELinux
+- Data Encryption and Secrets Management
+        - Encrypt data at rest
+        - Rotate your CMKs periodically
+        - Use EFS access points to simplify access to shared datasets
+        - EBS volumes for etcd nodes are encrypted with EBS encryption
+        - Use AWS KMS for envelope encryption of Kubernetes secrets
+        - Audit the use of Kubernetes Secrets
+        - Rotate your secrets periodically
+        - Use separate namespaces as a way to isolate secrets from different applications
+        - Use volume mounts instead of environment variables
+        - Use an external secrets provider (e.g. vault, sealed secret)
+- Regulatory Compliance
+- Incident Response and Forensics
+        - Identify the offending Pod and worker node
+        - Identify the offending Pods and worker nodes using workload name
+        - Identify the offending Pods and worker nodes using service account name
+        - Identify Pods with vulnerable or compromised images and worker nodes
+        - Isolate the Pod by creating a Network Policy that denies all ingress and egress traffic to the pod
+        - Revoke temporary security credentials assigned to the pod or worker node if necessary
+        - Cordon the worker node
+        - Enable termination protection on impacted worker node
+        - Label the offending Pod/Node with a label indicating that it is part of an active investigation
+        - Capture volatile artifacts on the worker node
+                - Capture the operating system memory
+                - Perform a netstat tree dump of the processes running and the open ports
+                - Run commands to save container-level state before evidence is altered.
+                - Pause the container for forensic capture.
+                - Snapshot the instance's EBS volumes.
+        - Redeploy compromised Pod or Workload Resource
+        - Review the AWS Security Incident Response Whitepaper
+        - Practice security game days
+        - Run penetration tests against your cluster
+- Image Security
+
 ## Linting & Git Pre Commit Hooks using Husky
 Ref: https://www.npmjs.com/package/husky
 
