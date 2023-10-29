@@ -20,6 +20,12 @@ variable "env" {
   description = "env"
 }
 
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}
+
 # EKS
 variable "cluster_name" {
   description = "EKS cluster name"

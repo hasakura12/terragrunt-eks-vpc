@@ -55,6 +55,14 @@ resource "aws_security_group" "cluster" {
   name   = "${var.cluster_name}-cluster"
   vpc_id = var.vpc_id
 
+  tags = merge(
+    var.tags,
+    {
+      "Name"                                      = "${var.cluster_name}-cluster"
+      "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+    },
+  )
+
   lifecycle {
     create_before_destroy = true
   }
