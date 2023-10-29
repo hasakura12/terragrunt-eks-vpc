@@ -44,7 +44,7 @@ dependency "eks" {
 
   # ref: https://terragrunt.gruntwork.io/docs/features/execute-terraform-commands-on-multiple-modules-at-once/#unapplied-dependency-and-mock-outputs
   mock_outputs = {
-    cluster_oidc_issuer_url = "dummy"
+    cluster_oidc_issuer_url = "https://oidc.eks.us-east-1.amazonaws.com/id/3CDDE894215E4496DB8AE2E8BD17963C"
   }
 
   mock_outputs_allowed_terraform_commands = ["plan", "validate"]
