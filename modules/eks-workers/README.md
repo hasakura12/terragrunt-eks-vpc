@@ -3,89 +3,6 @@
 ```sh
 Terraform will perform the following actions:
 
-  # aws_kms_alias.eks_worker_ebs will be created
-  + resource "aws_kms_alias" "eks_worker_ebs" {
-      + arn            = (known after apply)
-      + id             = (known after apply)
-      + name           = "alias/cmk-ue1-dev-eks-workers-ebs-volume"
-      + name_prefix    = (known after apply)
-      + target_key_arn = (known after apply)
-      + target_key_id  = (known after apply)
-    }
-
-  # aws_kms_key.eks_worker_ebs will be created
-  + resource "aws_kms_key" "eks_worker_ebs" {
-      + arn                                = (known after apply)
-      + bypass_policy_lockout_safety_check = false
-      + customer_master_key_spec           = "SYMMETRIC_DEFAULT"
-      + deletion_window_in_days            = 30
-      + description                        = "Kms key used for EKS node's EBS volume"
-      + enable_key_rotation                = true
-      + id                                 = (known after apply)
-      + is_enabled                         = true
-      + key_id                             = (known after apply)
-      + key_usage                          = "ENCRYPT_DECRYPT"
-      + multi_region                       = (known after apply)
-      + policy                             = jsonencode(
-            {
-              + Statement = [
-                  + {
-                      + Action    = "kms:*"
-                      + Effect    = "Allow"
-                      + Principal = {
-                          + AWS = "arn:aws:iam::266981300450:root"
-                        }
-                      + Resource  = "*"
-                      + Sid       = "Allow access for Key Administrators"
-                    },
-                  + {
-                      + Action    = [
-                          + "kms:ReEncrypt*",
-                          + "kms:GenerateDataKey*",
-                          + "kms:Encrypt",
-                          + "kms:DescribeKey",
-                          + "kms:Decrypt",
-                        ]
-                      + Effect    = "Allow"
-                      + Principal = {
-                          + AWS = [
-                              + "arn:aws:iam::266981300450:root",
-                              + "arn:aws:iam::266981300450:role/eks-cluster-control-plane",
-                              + "arn:aws:iam::266981300450:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling",
-                            ]
-                        }
-                      + Resource  = "*"
-                      + Sid       = "Allow service-linked role use of the CMK"
-                    },
-                  + {
-                      + Action    = "kms:CreateGrant"
-                      + Condition = {
-                          + Bool = {
-                              + "kms:GrantIsForAWSResource" = "true"
-                            }
-                        }
-                      + Effect    = "Allow"
-                      + Principal = {
-                          + AWS = [
-                              + "arn:aws:iam::266981300450:role/eks-cluster-control-plane",
-                              + "arn:aws:iam::266981300450:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling",
-                            ]
-                        }
-                      + Resource  = "*"
-                      + Sid       = "Allow attachment of persistent resources"
-                    },
-                ]
-              + Version   = "2012-10-17"
-            }
-        )
-      + tags_all                           = {
-          + "App"        = "terragrunt-eks-vpc"
-          + "Env"        = "dev"
-          + "Region"     = "us-east-1"
-          + "Region_Tag" = "ue1"
-        }
-    }
-
   # aws_security_group.node[0] will be created
   + resource "aws_security_group" "node" {
       + arn                    = (known after apply)
@@ -140,7 +57,7 @@ Terraform will perform the following actions:
       + security_group_id        = (known after apply)
       + security_group_rule_id   = (known after apply)
       + self                     = false
-      + source_security_group_id = "sg-07f9d496d9fa67c96"
+      + source_security_group_id = "sg-0a86570bcadc3a22a"
       + to_port                  = 443
       + type                     = "ingress"
     }
@@ -155,7 +72,7 @@ Terraform will perform the following actions:
       + security_group_id        = (known after apply)
       + security_group_rule_id   = (known after apply)
       + self                     = false
-      + source_security_group_id = "sg-07f9d496d9fa67c96"
+      + source_security_group_id = "sg-0a86570bcadc3a22a"
       + to_port                  = 4443
       + type                     = "ingress"
     }
@@ -170,7 +87,7 @@ Terraform will perform the following actions:
       + security_group_id        = (known after apply)
       + security_group_rule_id   = (known after apply)
       + self                     = false
-      + source_security_group_id = "sg-07f9d496d9fa67c96"
+      + source_security_group_id = "sg-0a86570bcadc3a22a"
       + to_port                  = 6443
       + type                     = "ingress"
     }
@@ -185,7 +102,7 @@ Terraform will perform the following actions:
       + security_group_id        = (known after apply)
       + security_group_rule_id   = (known after apply)
       + self                     = false
-      + source_security_group_id = "sg-07f9d496d9fa67c96"
+      + source_security_group_id = "sg-0a86570bcadc3a22a"
       + to_port                  = 8443
       + type                     = "ingress"
     }
@@ -200,7 +117,7 @@ Terraform will perform the following actions:
       + security_group_id        = (known after apply)
       + security_group_rule_id   = (known after apply)
       + self                     = false
-      + source_security_group_id = "sg-07f9d496d9fa67c96"
+      + source_security_group_id = "sg-0a86570bcadc3a22a"
       + to_port                  = 9443
       + type                     = "ingress"
     }
@@ -215,7 +132,7 @@ Terraform will perform the following actions:
       + security_group_id        = (known after apply)
       + security_group_rule_id   = (known after apply)
       + self                     = false
-      + source_security_group_id = "sg-07f9d496d9fa67c96"
+      + source_security_group_id = "sg-0a86570bcadc3a22a"
       + to_port                  = 10250
       + type                     = "ingress"
     }
@@ -270,8 +187,8 @@ Terraform will perform the following actions:
       + create_duration = "30s"
       + id              = (known after apply)
       + triggers        = {
-          + "cluster_certificate_authority_data" = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJWitFM1pTRkhDL1l3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TXpFd01qZ3hNelExTWpkYUZ3MHpNekV3TWpVeE16VXdNamRhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURJdHJXaEZQdXdCVDEyZ0VKd2oxcVk2MmoxRXl3cXo5eUJjQU1LTmorLzIrV3hURDhyc1JjUWlYaXoKaDd6Q2h3YnR6RWQ3b1dZRjVIOE1JWVJTZGg5U1oxbWVwQjRWbit1bDhQaXpaY09lKzZ6dU5JZnNVeEw1T1hHbgp3MHU1bXZSbldGcXczRmkyOVdyV2tFL0RjS3g1V005c29Pdy81SzhnNkNyN2owcDNkUXdFWFB4ZzdrY2orampxCklLMHo2NG9KYVFjaFJka3NXbmg5VGMxWHc5Z0FXWFRsdHJ0cFVGejBBQXFJRlFQM0J1NDBERjJrS2Y0am5vUUcKSncraEV5M0VIelltK1BNM0tRRW94Z0xxazJuZWxZTzBUdWV3M2FOWi9CT3oxZ0k1dzM5L3dlNnlCejJVVXl3KwpKd2hzN3hZc0RMTmFTUlEwNHJSYzVpV0czLzlyQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUUi9WdjRlbGw3aGtiRWt2TWYvNnZGeG8raGNUQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ2gwcnd6Y1pjaAo4cHU4elhGRnJxRUVyWTdDM1lxUGZXS2lBRW9FZm1aYkxBWmVuU2xmNnU4RHRaS2dIcWFnQ0xOSXVmRUEybjZtClZUNm5DbURCTWhYOTVreDVvY1ljS3JoRlRRL1orSGlBbm9UUzV4dkhBUUdtVTR0d0pjZGJLd2UrSER2MTgweWYKUlpBTCtvdUFKSDcyYjVxam9XVVI0YXFoRkRRS28wNlVITVpGZFlZZkJLc3VId1JSQkYzVUdUNVNxNXU2dDBQNgphSyt1RVk2K3hBbXN0TlNYZk5RMjI4R1dicVA3Q1JsU2I4ZHExSmR6eFZJb0NNVEpsa2FiaTA5UUdzcjQ4MTMwCktveDZKblF6WE9oSHNCWCtCalVzY0lIVk1hYjBUUFZuT0hwMlJWWFNOQnJGRC84U25RelRvblFvUjRLSjd3bC8KZFNlaTBNU1RGZjFyCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
-          + "cluster_endpoint"                   = "https://4336731231B20B6D438985EF23F5EAE1.gr7.us-east-1.eks.amazonaws.com"
+          + "cluster_certificate_authority_data" = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJV212VHc3b3V3aUV3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TXpFd01qa3dOREU1TWpsYUZ3MHpNekV3TWpZd05ESTBNamxhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURYVHNkTlZJWjAybEtlTW03K3FjRmpaYjlxSXVKV0J0YmljdjdDcWlHMEZHUmFLelp4Tzh5VFlwN0UKQ0daYnR6YmZqd0RaSTdxZDU4V3ArSGxobzZxaW5Ca0FUUFJrU00yaVhFVUJpVDZLSlBWUEZPcGJOTEVtMVhnWgpEcVliNWZPRTYrM2M1QXE4UlZSOUI2dUcrOWxoNk5pUjgvV2hiRmswRW5CeTJqVGtIeXY5NVloL0UxWWJ6eklWCnEyOFNMRkFjRlRXaWRKcFAxbm9Sblg4eE1lQ0k5N3o2NzBmRG44Y3FMSEtGeXFXME4zQnNRNmhKRnBTMnF0amYKYm1Kek1ZWjNwQy9SUjlMVElMMWNyemdoWXFhMnJQU3NVU2MvTndnY2N6QkJtbFZHTE10SWZLbStlRHBnbnV0awpYVEJBWkVqdW50RVhUby9QRm4zNDBKR0E4c3Q5QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJRMkg5V05oR1ZpT1JLbUgvbTlBd2hLalVnYThUQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQlFMVXNVNjUyUgpmRW5oaDAyNmJTNlRtNDVCbUFnRGo3ejlDNW5uMzhJclR3SUpGMzdrMDVyTEppME83Nkc2b2dDV3FVVjM1S3RUCnoyd1NseUdFcHJFc2RweE5abEVxRjhyakdCY3ROdjV0RkVpeXRwSEg1U1FhTFBYSndZY0NZQytuQVZIVFNzcUcKcWtuODV6amRhUGR3YlBvWTlpUEpSYTRzbmp5T0NTUk9Rc3U3eUdRTVZYSHQ3NVhxTmlIcFA1Zm9ZVXBCU0JHRgpXUjlOc2Ewa2R2N2x5V2c1dlY5bnJhMU9tWmt3cjYzR3ZXVzJTbWU1VUc0NndZdVJ0OS9uOW14TXk5cWFvNXdmCmhXUmo1UEIxdXJFMjhzOGtjN2Z3MG5HVU5vY2l3SmpHNnZaY1hoNWdpYS9TK2hjeGZFWXBWNjEwMlR0Q3k3QjYKWjd3c2JScG1pRjR3Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+          + "cluster_endpoint"                   = "https://D02A4C29FEF251ED0CC96BF17272ED81.gr7.us-east-1.eks.amazonaws.com"
           + "cluster_name"                       = "eks-dev-ue1"
           + "cluster_version"                    = "1.28"
         }
@@ -477,8 +394,22 @@ Terraform will perform the following actions:
           + "self-managed-node"                 = "true"
         }
       + update_default_version = true
-      + user_data              = "IyEvYmluL2Jhc2gKc2V0IC1lCkI2NF9DTFVTVEVSX0NBPUxTMHRMUzFDUlVkSlRpQkRSVkpVU1VaSlEwRlVSUzB0TFMwdENrMUpTVVJDVkVORFFXVXlaMEYzU1VKQlowbEpXaXRGTTFwVFJraERMMWwzUkZGWlNrdHZXa2xvZG1OT1FWRkZURUpSUVhkR1ZFVlVUVUpGUjBFeFZVVUtRWGhOUzJFelZtbGFXRXAxV2xoU2JHTjZRV1ZHZHpCNVRYcEZkMDFxWjNoTmVsRXhUV3BrWVVaM01IcE5la1YzVFdwVmVFMTZWWGROYW1SaFRVSlZlQXBGZWtGU1FtZE9Wa0pCVFZSRGJYUXhXVzFXZVdKdFZqQmFXRTEzWjJkRmFVMUJNRWREVTNGSFUwbGlNMFJSUlVKQlVWVkJRVFJKUWtSM1FYZG5aMFZMQ2tGdlNVSkJVVVJKZEhKWGFFWlFkWGRDVkRFeVowVktkMm94Y1ZrMk1tb3hSWGwzY1hvNWVVSmpRVTFMVG1vckx6SXJWM2hVUkRoeWMxSmpVV2xZYVhvS2FEZDZRMmgzWW5SNlJXUTNiMWRaUmpWSU9FMUpXVkpUWkdnNVUxb3hiV1Z3UWpSV2JpdDFiRGhRYVhwYVkwOWxLelo2ZFU1SlpuTlZlRXcxVDFoSGJncDNNSFUxYlhaU2JsZEdjWGN6Um1reU9WZHlWMnRGTDBSalMzZzFWMDA1YzI5UGR5ODFTemhuTmtOeU4yb3djRE5rVVhkRldGQjRaemRyWTJvcmFtcHhDa2xMTUhvMk5HOUtZVkZqYUZKa2EzTlhibWc1VkdNeFdIYzVaMEZYV0ZSc2RISjBjRlZHZWpCQlFYRkpSbEZRTTBKMU5EQkVSakpyUzJZMGFtNXZVVWNLU25jcmFFVjVNMFZJZWxsdEsxQk5NMHRSUlc5NFoweHhhekp1Wld4WlR6QlVkV1YzTTJGT1dpOUNUM294WjBrMWR6TTVMM2RsTm5sQ2VqSlZWWGwzS3dwS2QyaHpOM2haYzBSTVRtRlRVbEV3TkhKU1l6VnBWMGN6THpseVFXZE5Ra0ZCUjJwWFZFSllUVUUwUjBFeFZXUkVkMFZDTDNkUlJVRjNTVU53UkVGUUNrSm5UbFpJVWsxQ1FXWTRSVUpVUVVSQlVVZ3ZUVUl3UjBFeFZXUkVaMUZYUWtKVVVpOVdkalJsYkd3M2FHdGlSV3QyVFdZdk5uWkdlRzhyYUdOVVFWWUtRbWRPVmtoU1JVVkVha0ZOWjJkd2NtUlhTbXhqYlRWc1pFZFdlazFCTUVkRFUzRkhVMGxpTTBSUlJVSkRkMVZCUVRSSlFrRlJRMmd3Y25kNlkxcGphQW80Y0hVNGVsaEdSbkp4UlVWeVdUZERNMWx4VUdaWFMybEJSVzlGWm0xYVlreEJXbVZ1VTJ4bU5uVTRSSFJhUzJkSWNXRm5RMHhPU1hWbVJVRXlialp0Q2xaVU5tNURiVVJDVFdoWU9UVnJlRFZ2WTFsalMzSm9SbFJSTDFvclNHbEJibTlVVXpWNGRraEJVVWR0VlRSMGQwcGpaR0pMZDJVclNFUjJNVGd3ZVdZS1VscEJUQ3R2ZFVGS1NEY3lZalZ4YW05WFZWSTBZWEZvUmtSUlMyOHdObFZJVFZwR1pGbFpaa0pMYzNWSWQxSlNRa1l6VlVkVU5WTnhOWFUyZERCUU5ncGhTeXQxUlZrMkszaEJiWE4wVGxOWVprNVJNakk0UjFkaWNWQTNRMUpzVTJJNFpIRXhTbVI2ZUZaSmIwTk5WRXBzYTJGaWFUQTVVVWR6Y2pRNE1UTXdDa3R2ZURaS2JsRjZXRTlvU0hOQ1dDdENhbFZ6WTBsSVZrMWhZakJVVUZadVQwaHdNbEpXV0ZOT1FuSkdSQzg0VTI1UmVsUnZibEZ2VWpSTFNqZDNiQzhLWkZObGFUQk5VMVJHWmpGeUNpMHRMUzB0UlU1RUlFTkZVbFJKUmtsRFFWUkZMUzB0TFMwSwpBUElfU0VSVkVSX1VSTD1odHRwczovLzQzMzY3MzEyMzFCMjBCNkQ0Mzg5ODVFRjIzRjVFQUUxLmdyNy51cy1lYXN0LTEuZWtzLmFtYXpvbmF3cy5jb20KL2V0Yy9la3MvYm9vdHN0cmFwLnNoIGVrcy1kZXYtdWUxIC0ta3ViZWxldC1leHRyYS1hcmdzICctLW5vZGUtbGFiZWxzPWVudj1kZXYsc2VsZi1tYW5hZ2VkLW5vZGU9dHJ1ZSxyZWdpb249dWUxLGs4c19uYW1lc3BhY2U9ZGV2ICAtLXJlZ2lzdGVyLXdpdGgtdGFpbnRzPWRldi1vbmx5PXRydWU6UHJlZmVyTm9TY2hlZHVsZScgLS1iNjQtY2x1c3Rlci1jYSAkQjY0X0NMVVNURVJfQ0EgLS1hcGlzZXJ2ZXItZW5kcG9pbnQgJEFQSV9TRVJWRVJfVVJMCiMgdGhpcyBpcyB0byBjb21wbGV0ZWx5IGJsb2NrIGFsbCBjb250YWluZXJzIHJ1bm5pbmcgb24gYSB3b3JrZXIgbm9kZSBmcm9tIHF1ZXJ5aW5nIHRoZSBpbnN0YW5jZSBtZXRhZGF0YSBzZXJ2aWNlIGZvciBhbnkgbWV0YWRhdGEgdG8gYXZvaWQgcG9kcyBmcm9tIHVzaW5nIG5vZGUncyBJQU0gaW5zdGFuY2UgcHJvZmlsZQojIHJlZjogaHR0cHM6Ly9kb2NzLmF3cy5hbWF6b24uY29tL2Vrcy9sYXRlc3QvdXNlcmd1aWRlL3Jlc3RyaWN0LWVjMi1jcmVkZW50aWFsLWFjY2Vzcy5odG1sCnl1bSBpbnN0YWxsIC15IGlwdGFibGVzLXNlcnZpY2VzOyBpcHRhYmxlcyAtLWluc2VydCBGT1JXQVJEIDEgLS1pbi1pbnRlcmZhY2UgZW5pKyAtLWRlc3RpbmF0aW9uIDE2OS4yNTQuMTY5LjI1NC8zMiAtLWp1bXAgRFJPUDsgaXB0YWJsZXMtc2F2ZSB8IHRlZSAvZXRjL3N5c2NvbmZpZy9pcHRhYmxlczsgc3lzdGVtY3RsIGVuYWJsZSAtLW5vdyBpcHRhYmxlczsKCiMgaW5zdGFsbCBJbnNwZWN0b3IgYWdlbnQKY3VybCAtTyBodHRwczovL2luc3BlY3Rvci1hZ2VudC5hbWF6b25hd3MuY29tL2xpbnV4L2xhdGVzdC9pbnN0YWxsOyBzdWRvIGJhc2ggaW5zdGFsbDsKCiMgaW5zdGFsbCBTU00gYWdlbnQKc3VkbyB5dW0gaW5zdGFsbCAteSBodHRwczovL3MzLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tL2FtYXpvbi1zc20tdXMtZWFzdC0xL2xhdGVzdC9saW51eF9hbWQ2NC9hbWF6b24tc3NtLWFnZW50LnJwbTsgc3VkbyBzeXN0ZW1jdGwgZW5hYmxlIGFtYXpvbi1zc20tYWdlbnQ7IHN1ZG8gc3lzdGVtY3RsIHN0YXJ0IGFtYXpvbi1zc20tYWdlbnQ7Cgo="
+      + user_data              = "IyEvYmluL2Jhc2gKc2V0IC1lCkI2NF9DTFVTVEVSX0NBPUxTMHRMUzFDUlVkSlRpQkRSVkpVU1VaSlEwRlVSUzB0TFMwdENrMUpTVVJDVkVORFFXVXlaMEYzU1VKQlowbEpWMjEyVkhjM2IzVjNhVVYzUkZGWlNrdHZXa2xvZG1OT1FWRkZURUpSUVhkR1ZFVlVUVUpGUjBFeFZVVUtRWGhOUzJFelZtbGFXRXAxV2xoU2JHTjZRV1ZHZHpCNVRYcEZkMDFxYTNkT1JFVTFUV3BzWVVaM01IcE5la1YzVFdwWmQwNUVTVEJOYW14aFRVSlZlQXBGZWtGU1FtZE9Wa0pCVFZSRGJYUXhXVzFXZVdKdFZqQmFXRTEzWjJkRmFVMUJNRWREVTNGSFUwbGlNMFJSUlVKQlVWVkJRVFJKUWtSM1FYZG5aMFZMQ2tGdlNVSkJVVVJZVkhOa1RsWkpXakF5YkV0bFRXMDNLM0ZqUm1wYVlqbHhTWFZLVjBKMFltbGpkamREY1dsSE1FWkhVbUZMZWxwNFR6aDVWRmx3TjBVS1EwZGFZblI2WW1acWQwUmFTVGR4WkRVNFYzQXJTR3hvYnpaeGFXNUNhMEZVVUZKclUwMHlhVmhGVlVKcFZEWkxTbEJXVUVaUGNHSk9URVZ0TVZobldncEVjVmxpTldaUFJUWXJNMk0xUVhFNFVsWlNPVUkyZFVjck9XeG9OazVwVWpndlYyaGlSbXN3Ulc1Q2VUSnFWR3RJZVhZNU5WbG9MMFV4V1dKNmVrbFdDbkV5T0ZOTVJrRmpSbFJYYVdSS2NGQXhibTlTYmxnNGVFMWxRMGs1TjNvMk56Qm1SRzQ0WTNGTVNFdEdlWEZYTUU0elFuTlJObWhLUm5CVE1uRjBhbVlLWW0xS2VrMVpXak53UXk5U1VqbE1WRWxNTVdOeWVtZG9XWEZoTW5KUVUzTlZVMk12VG5kblkyTjZRa0p0YkZaSFRFMTBTV1pMYlN0bFJIQm5iblYwYXdwWVZFSkJXa1ZxZFc1MFJWaFVieTlRUm00ek5EQktSMEU0YzNRNVFXZE5Ra0ZCUjJwWFZFSllUVUUwUjBFeFZXUkVkMFZDTDNkUlJVRjNTVU53UkVGUUNrSm5UbFpJVWsxQ1FXWTRSVUpVUVVSQlVVZ3ZUVUl3UjBFeFZXUkVaMUZYUWtKUk1rZzVWMDVvUjFacFQxSkxiVWd2YlRsQmQyaExhbFZuWVRoVVFWWUtRbWRPVmtoU1JVVkVha0ZOWjJkd2NtUlhTbXhqYlRWc1pFZFdlazFCTUVkRFUzRkhVMGxpTTBSUlJVSkRkMVZCUVRSSlFrRlJRbEZNVlhOVk5qVXlVZ3BtUlc1b2FEQXlObUpUTmxSdE5EVkNiVUZuUkdvM2VqbEROVzV1TXpoSmNsUjNTVXBHTXpkck1EVnlURXBwTUU4M05rYzJiMmREVjNGVlZqTTFTM1JVQ25veWQxTnNlVWRGY0hKRmMyUndlRTVhYkVWeFJqaHlha2RDWTNST2RqVjBSa1ZwZVhSd1NFZzFVMUZoVEZCWVNuZFpZME5aUXl0dVFWWklWRk56Y1VjS2NXdHVPRFY2YW1SaFVHUjNZbEJ2V1RscFVFcFNZVFJ6Ym1wNVQwTlRVazlSYzNVM2VVZFJUVlpZU0hRM05WaHhUbWxJY0ZBMVptOVpWWEJDVTBKSFJncFhVamxPYzJFd2EyUjJOMng1VjJjMWRsWTVibkpoTVU5dFdtdDNjall6UjNaWFZ6SlRiV1UxVlVjME5uZFpkVkowT1M5dU9XMTRUWGs1Y1dGdk5YZG1DbWhYVW1vMVVFSXhkWEpGTWpoek9HdGpOMlozTUc1SFZVNXZZMmwzU21wSE5uWmFZMWhvTldkcFlTOVRLMmhqZUdaRldYQldOakV3TWxSMFEzazNRallLV2pkM2MySlNjRzFwUmpSM0NpMHRMUzB0UlU1RUlFTkZVbFJKUmtsRFFWUkZMUzB0TFMwSwpBUElfU0VSVkVSX1VSTD1odHRwczovL0QwMkE0QzI5RkVGMjUxRUQwQ0M5NkJGMTcyNzJFRDgxLmdyNy51cy1lYXN0LTEuZWtzLmFtYXpvbmF3cy5jb20KL2V0Yy9la3MvYm9vdHN0cmFwLnNoIGVrcy1kZXYtdWUxIC0ta3ViZWxldC1leHRyYS1hcmdzICctLW5vZGUtbGFiZWxzPWVudj1kZXYsc2VsZi1tYW5hZ2VkLW5vZGU9dHJ1ZSxyZWdpb249dWUxLGs4c19uYW1lc3BhY2U9ZGV2ICAtLXJlZ2lzdGVyLXdpdGgtdGFpbnRzPWRldi1vbmx5PXRydWU6UHJlZmVyTm9TY2hlZHVsZScgLS1iNjQtY2x1c3Rlci1jYSAkQjY0X0NMVVNURVJfQ0EgLS1hcGlzZXJ2ZXItZW5kcG9pbnQgJEFQSV9TRVJWRVJfVVJMCiMgdGhpcyBpcyB0byBjb21wbGV0ZWx5IGJsb2NrIGFsbCBjb250YWluZXJzIHJ1bm5pbmcgb24gYSB3b3JrZXIgbm9kZSBmcm9tIHF1ZXJ5aW5nIHRoZSBpbnN0YW5jZSBtZXRhZGF0YSBzZXJ2aWNlIGZvciBhbnkgbWV0YWRhdGEgdG8gYXZvaWQgcG9kcyBmcm9tIHVzaW5nIG5vZGUncyBJQU0gaW5zdGFuY2UgcHJvZmlsZQojIHJlZjogaHR0cHM6Ly9kb2NzLmF3cy5hbWF6b24uY29tL2Vrcy9sYXRlc3QvdXNlcmd1aWRlL3Jlc3RyaWN0LWVjMi1jcmVkZW50aWFsLWFjY2Vzcy5odG1sCnl1bSBpbnN0YWxsIC15IGlwdGFibGVzLXNlcnZpY2VzOyBpcHRhYmxlcyAtLWluc2VydCBGT1JXQVJEIDEgLS1pbi1pbnRlcmZhY2UgZW5pKyAtLWRlc3RpbmF0aW9uIDE2OS4yNTQuMTY5LjI1NC8zMiAtLWp1bXAgRFJPUDsgaXB0YWJsZXMtc2F2ZSB8IHRlZSAvZXRjL3N5c2NvbmZpZy9pcHRhYmxlczsgc3lzdGVtY3RsIGVuYWJsZSAtLW5vdyBpcHRhYmxlczsKCiMgaW5zdGFsbCBJbnNwZWN0b3IgYWdlbnQKY3VybCAtTyBodHRwczovL2luc3BlY3Rvci1hZ2VudC5hbWF6b25hd3MuY29tL2xpbnV4L2xhdGVzdC9pbnN0YWxsOyBzdWRvIGJhc2ggaW5zdGFsbDsKCiMgaW5zdGFsbCBTU00gYWdlbnQKc3VkbyB5dW0gaW5zdGFsbCAteSBodHRwczovL3MzLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tL2FtYXpvbi1zc20tdXMtZWFzdC0xL2xhdGVzdC9saW51eF9hbWQ2NC9hbWF6b24tc3NtLWFnZW50LnJwbTsgc3VkbyBzeXN0ZW1jdGwgZW5hYmxlIGFtYXpvbi1zc20tYWdlbnQ7IHN1ZG8gc3lzdGVtY3RsIHN0YXJ0IGFtYXpvbi1zc20tYWdlbnQ7Cgo="
       + vpc_security_group_ids = (known after apply)
+
+      + block_device_mappings {
+          + device_name = "/dev/xvda"
+
+          + ebs {
+              + delete_on_termination = "true"
+              + encrypted             = "true"
+              + iops                  = (known after apply)
+              + kms_key_id            = "arn:aws:kms:us-east-1:266981300450:key/31cb16cd-c412-4028-ada1-93ea033f46e3"
+              + throughput            = (known after apply)
+              + volume_size           = 10
+              + volume_type           = "gp3"
+            }
+        }
 
       + iam_instance_profile {
           + arn = (known after apply)
@@ -525,15 +456,12 @@ Terraform will perform the following actions:
         }
     }
 
-Plan: 21 to add, 0 to change, 0 to destroy.
+Plan: 19 to add, 0 to change, 0 to destroy.
 
 Changes to Outputs:
-  + cluster_workers_ebs_alias_arn = (known after apply)
-  + cluster_workers_ebs_id        = (known after apply)
-  + cluster_workers_ebs_kms_arn   = (known after apply)
-  + node_security_group_arn       = (known after apply)
-  + node_security_group_id        = (known after apply)
-  + self_managed_node_groups      = {
+  + node_security_group_arn  = (known after apply)
+  + node_security_group_id   = (known after apply)
+  + self_managed_node_groups = {
       + "c1.medium" = {
           + cluster_workers_autoscaling_group_arn                       = (known after apply)
           + cluster_workers_autoscaling_group_availability_zones        = (known after apply)
@@ -564,7 +492,7 @@ Changes to Outputs:
           + cluster_workers_launch_template_latest_version              = (known after apply)
           + cluster_workers_launch_template_name                        = (known after apply)
           + cluster_workers_platform                                    = "linux"
-          + cluster_workers_user_data                                   = "IyEvYmluL2Jhc2gKc2V0IC1lCkI2NF9DTFVTVEVSX0NBPUxTMHRMUzFDUlVkSlRpQkRSVkpVU1VaSlEwRlVSUzB0TFMwdENrMUpTVVJDVkVORFFXVXlaMEYzU1VKQlowbEpXaXRGTTFwVFJraERMMWwzUkZGWlNrdHZXa2xvZG1OT1FWRkZURUpSUVhkR1ZFVlVUVUpGUjBFeFZVVUtRWGhOUzJFelZtbGFXRXAxV2xoU2JHTjZRV1ZHZHpCNVRYcEZkMDFxWjNoTmVsRXhUV3BrWVVaM01IcE5la1YzVFdwVmVFMTZWWGROYW1SaFRVSlZlQXBGZWtGU1FtZE9Wa0pCVFZSRGJYUXhXVzFXZVdKdFZqQmFXRTEzWjJkRmFVMUJNRWREVTNGSFUwbGlNMFJSUlVKQlVWVkJRVFJKUWtSM1FYZG5aMFZMQ2tGdlNVSkJVVVJKZEhKWGFFWlFkWGRDVkRFeVowVktkMm94Y1ZrMk1tb3hSWGwzY1hvNWVVSmpRVTFMVG1vckx6SXJWM2hVUkRoeWMxSmpVV2xZYVhvS2FEZDZRMmgzWW5SNlJXUTNiMWRaUmpWSU9FMUpXVkpUWkdnNVUxb3hiV1Z3UWpSV2JpdDFiRGhRYVhwYVkwOWxLelo2ZFU1SlpuTlZlRXcxVDFoSGJncDNNSFUxYlhaU2JsZEdjWGN6Um1reU9WZHlWMnRGTDBSalMzZzFWMDA1YzI5UGR5ODFTemhuTmtOeU4yb3djRE5rVVhkRldGQjRaemRyWTJvcmFtcHhDa2xMTUhvMk5HOUtZVkZqYUZKa2EzTlhibWc1VkdNeFdIYzVaMEZYV0ZSc2RISjBjRlZHZWpCQlFYRkpSbEZRTTBKMU5EQkVSakpyUzJZMGFtNXZVVWNLU25jcmFFVjVNMFZJZWxsdEsxQk5NMHRSUlc5NFoweHhhekp1Wld4WlR6QlVkV1YzTTJGT1dpOUNUM294WjBrMWR6TTVMM2RsTm5sQ2VqSlZWWGwzS3dwS2QyaHpOM2haYzBSTVRtRlRVbEV3TkhKU1l6VnBWMGN6THpseVFXZE5Ra0ZCUjJwWFZFSllUVUUwUjBFeFZXUkVkMFZDTDNkUlJVRjNTVU53UkVGUUNrSm5UbFpJVWsxQ1FXWTRSVUpVUVVSQlVVZ3ZUVUl3UjBFeFZXUkVaMUZYUWtKVVVpOVdkalJsYkd3M2FHdGlSV3QyVFdZdk5uWkdlRzhyYUdOVVFWWUtRbWRPVmtoU1JVVkVha0ZOWjJkd2NtUlhTbXhqYlRWc1pFZFdlazFCTUVkRFUzRkhVMGxpTTBSUlJVSkRkMVZCUVRSSlFrRlJRMmd3Y25kNlkxcGphQW80Y0hVNGVsaEdSbkp4UlVWeVdUZERNMWx4VUdaWFMybEJSVzlGWm0xYVlreEJXbVZ1VTJ4bU5uVTRSSFJhUzJkSWNXRm5RMHhPU1hWbVJVRXlialp0Q2xaVU5tNURiVVJDVFdoWU9UVnJlRFZ2WTFsalMzSm9SbFJSTDFvclNHbEJibTlVVXpWNGRraEJVVWR0VlRSMGQwcGpaR0pMZDJVclNFUjJNVGd3ZVdZS1VscEJUQ3R2ZFVGS1NEY3lZalZ4YW05WFZWSTBZWEZvUmtSUlMyOHdObFZJVFZwR1pGbFpaa0pMYzNWSWQxSlNRa1l6VlVkVU5WTnhOWFUyZERCUU5ncGhTeXQxUlZrMkszaEJiWE4wVGxOWVprNVJNakk0UjFkaWNWQTNRMUpzVTJJNFpIRXhTbVI2ZUZaSmIwTk5WRXBzYTJGaWFUQTVVVWR6Y2pRNE1UTXdDa3R2ZURaS2JsRjZXRTlvU0hOQ1dDdENhbFZ6WTBsSVZrMWhZakJVVUZadVQwaHdNbEpXV0ZOT1FuSkdSQzg0VTI1UmVsUnZibEZ2VWpSTFNqZDNiQzhLWkZObGFUQk5VMVJHWmpGeUNpMHRMUzB0UlU1RUlFTkZVbFJKUmtsRFFWUkZMUzB0TFMwSwpBUElfU0VSVkVSX1VSTD1odHRwczovLzQzMzY3MzEyMzFCMjBCNkQ0Mzg5ODVFRjIzRjVFQUUxLmdyNy51cy1lYXN0LTEuZWtzLmFtYXpvbmF3cy5jb20KL2V0Yy9la3MvYm9vdHN0cmFwLnNoIGVrcy1kZXYtdWUxIC0ta3ViZWxldC1leHRyYS1hcmdzICctLW5vZGUtbGFiZWxzPWVudj1kZXYsc2VsZi1tYW5hZ2VkLW5vZGU9dHJ1ZSxyZWdpb249dWUxLGs4c19uYW1lc3BhY2U9ZGV2ICAtLXJlZ2lzdGVyLXdpdGgtdGFpbnRzPWRldi1vbmx5PXRydWU6UHJlZmVyTm9TY2hlZHVsZScgLS1iNjQtY2x1c3Rlci1jYSAkQjY0X0NMVVNURVJfQ0EgLS1hcGlzZXJ2ZXItZW5kcG9pbnQgJEFQSV9TRVJWRVJfVVJMCiMgdGhpcyBpcyB0byBjb21wbGV0ZWx5IGJsb2NrIGFsbCBjb250YWluZXJzIHJ1bm5pbmcgb24gYSB3b3JrZXIgbm9kZSBmcm9tIHF1ZXJ5aW5nIHRoZSBpbnN0YW5jZSBtZXRhZGF0YSBzZXJ2aWNlIGZvciBhbnkgbWV0YWRhdGEgdG8gYXZvaWQgcG9kcyBmcm9tIHVzaW5nIG5vZGUncyBJQU0gaW5zdGFuY2UgcHJvZmlsZQojIHJlZjogaHR0cHM6Ly9kb2NzLmF3cy5hbWF6b24uY29tL2Vrcy9sYXRlc3QvdXNlcmd1aWRlL3Jlc3RyaWN0LWVjMi1jcmVkZW50aWFsLWFjY2Vzcy5odG1sCnl1bSBpbnN0YWxsIC15IGlwdGFibGVzLXNlcnZpY2VzOyBpcHRhYmxlcyAtLWluc2VydCBGT1JXQVJEIDEgLS1pbi1pbnRlcmZhY2UgZW5pKyAtLWRlc3RpbmF0aW9uIDE2OS4yNTQuMTY5LjI1NC8zMiAtLWp1bXAgRFJPUDsgaXB0YWJsZXMtc2F2ZSB8IHRlZSAvZXRjL3N5c2NvbmZpZy9pcHRhYmxlczsgc3lzdGVtY3RsIGVuYWJsZSAtLW5vdyBpcHRhYmxlczsKCiMgaW5zdGFsbCBJbnNwZWN0b3IgYWdlbnQKY3VybCAtTyBodHRwczovL2luc3BlY3Rvci1hZ2VudC5hbWF6b25hd3MuY29tL2xpbnV4L2xhdGVzdC9pbnN0YWxsOyBzdWRvIGJhc2ggaW5zdGFsbDsKCiMgaW5zdGFsbCBTU00gYWdlbnQKc3VkbyB5dW0gaW5zdGFsbCAteSBodHRwczovL3MzLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tL2FtYXpvbi1zc20tdXMtZWFzdC0xL2xhdGVzdC9saW51eF9hbWQ2NC9hbWF6b24tc3NtLWFnZW50LnJwbTsgc3VkbyBzeXN0ZW1jdGwgZW5hYmxlIGFtYXpvbi1zc20tYWdlbnQ7IHN1ZG8gc3lzdGVtY3RsIHN0YXJ0IGFtYXpvbi1zc20tYWdlbnQ7Cgo="
+          + cluster_workers_user_data                                   = "IyEvYmluL2Jhc2gKc2V0IC1lCkI2NF9DTFVTVEVSX0NBPUxTMHRMUzFDUlVkSlRpQkRSVkpVU1VaSlEwRlVSUzB0TFMwdENrMUpTVVJDVkVORFFXVXlaMEYzU1VKQlowbEpWMjEyVkhjM2IzVjNhVVYzUkZGWlNrdHZXa2xvZG1OT1FWRkZURUpSUVhkR1ZFVlVUVUpGUjBFeFZVVUtRWGhOUzJFelZtbGFXRXAxV2xoU2JHTjZRV1ZHZHpCNVRYcEZkMDFxYTNkT1JFVTFUV3BzWVVaM01IcE5la1YzVFdwWmQwNUVTVEJOYW14aFRVSlZlQXBGZWtGU1FtZE9Wa0pCVFZSRGJYUXhXVzFXZVdKdFZqQmFXRTEzWjJkRmFVMUJNRWREVTNGSFUwbGlNMFJSUlVKQlVWVkJRVFJKUWtSM1FYZG5aMFZMQ2tGdlNVSkJVVVJZVkhOa1RsWkpXakF5YkV0bFRXMDNLM0ZqUm1wYVlqbHhTWFZLVjBKMFltbGpkamREY1dsSE1FWkhVbUZMZWxwNFR6aDVWRmx3TjBVS1EwZGFZblI2WW1acWQwUmFTVGR4WkRVNFYzQXJTR3hvYnpaeGFXNUNhMEZVVUZKclUwMHlhVmhGVlVKcFZEWkxTbEJXVUVaUGNHSk9URVZ0TVZobldncEVjVmxpTldaUFJUWXJNMk0xUVhFNFVsWlNPVUkyZFVjck9XeG9OazVwVWpndlYyaGlSbXN3Ulc1Q2VUSnFWR3RJZVhZNU5WbG9MMFV4V1dKNmVrbFdDbkV5T0ZOTVJrRmpSbFJYYVdSS2NGQXhibTlTYmxnNGVFMWxRMGs1TjNvMk56Qm1SRzQ0WTNGTVNFdEdlWEZYTUU0elFuTlJObWhLUm5CVE1uRjBhbVlLWW0xS2VrMVpXak53UXk5U1VqbE1WRWxNTVdOeWVtZG9XWEZoTW5KUVUzTlZVMk12VG5kblkyTjZRa0p0YkZaSFRFMTBTV1pMYlN0bFJIQm5iblYwYXdwWVZFSkJXa1ZxZFc1MFJWaFVieTlRUm00ek5EQktSMEU0YzNRNVFXZE5Ra0ZCUjJwWFZFSllUVUUwUjBFeFZXUkVkMFZDTDNkUlJVRjNTVU53UkVGUUNrSm5UbFpJVWsxQ1FXWTRSVUpVUVVSQlVVZ3ZUVUl3UjBFeFZXUkVaMUZYUWtKUk1rZzVWMDVvUjFacFQxSkxiVWd2YlRsQmQyaExhbFZuWVRoVVFWWUtRbWRPVmtoU1JVVkVha0ZOWjJkd2NtUlhTbXhqYlRWc1pFZFdlazFCTUVkRFUzRkhVMGxpTTBSUlJVSkRkMVZCUVRSSlFrRlJRbEZNVlhOVk5qVXlVZ3BtUlc1b2FEQXlObUpUTmxSdE5EVkNiVUZuUkdvM2VqbEROVzV1TXpoSmNsUjNTVXBHTXpkck1EVnlURXBwTUU4M05rYzJiMmREVjNGVlZqTTFTM1JVQ25veWQxTnNlVWRGY0hKRmMyUndlRTVhYkVWeFJqaHlha2RDWTNST2RqVjBSa1ZwZVhSd1NFZzFVMUZoVEZCWVNuZFpZME5aUXl0dVFWWklWRk56Y1VjS2NXdHVPRFY2YW1SaFVHUjNZbEJ2V1RscFVFcFNZVFJ6Ym1wNVQwTlRVazlSYzNVM2VVZFJUVlpZU0hRM05WaHhUbWxJY0ZBMVptOVpWWEJDVTBKSFJncFhVamxPYzJFd2EyUjJOMng1VjJjMWRsWTVibkpoTVU5dFdtdDNjall6UjNaWFZ6SlRiV1UxVlVjME5uZFpkVkowT1M5dU9XMTRUWGs1Y1dGdk5YZG1DbWhYVW1vMVVFSXhkWEpGTWpoek9HdGpOMlozTUc1SFZVNXZZMmwzU21wSE5uWmFZMWhvTldkcFlTOVRLMmhqZUdaRldYQldOakV3TWxSMFEzazNRallLV2pkM2MySlNjRzFwUmpSM0NpMHRMUzB0UlU1RUlFTkZVbFJKUmtsRFFWUkZMUzB0TFMwSwpBUElfU0VSVkVSX1VSTD1odHRwczovL0QwMkE0QzI5RkVGMjUxRUQwQ0M5NkJGMTcyNzJFRDgxLmdyNy51cy1lYXN0LTEuZWtzLmFtYXpvbmF3cy5jb20KL2V0Yy9la3MvYm9vdHN0cmFwLnNoIGVrcy1kZXYtdWUxIC0ta3ViZWxldC1leHRyYS1hcmdzICctLW5vZGUtbGFiZWxzPWVudj1kZXYsc2VsZi1tYW5hZ2VkLW5vZGU9dHJ1ZSxyZWdpb249dWUxLGs4c19uYW1lc3BhY2U9ZGV2ICAtLXJlZ2lzdGVyLXdpdGgtdGFpbnRzPWRldi1vbmx5PXRydWU6UHJlZmVyTm9TY2hlZHVsZScgLS1iNjQtY2x1c3Rlci1jYSAkQjY0X0NMVVNURVJfQ0EgLS1hcGlzZXJ2ZXItZW5kcG9pbnQgJEFQSV9TRVJWRVJfVVJMCiMgdGhpcyBpcyB0byBjb21wbGV0ZWx5IGJsb2NrIGFsbCBjb250YWluZXJzIHJ1bm5pbmcgb24gYSB3b3JrZXIgbm9kZSBmcm9tIHF1ZXJ5aW5nIHRoZSBpbnN0YW5jZSBtZXRhZGF0YSBzZXJ2aWNlIGZvciBhbnkgbWV0YWRhdGEgdG8gYXZvaWQgcG9kcyBmcm9tIHVzaW5nIG5vZGUncyBJQU0gaW5zdGFuY2UgcHJvZmlsZQojIHJlZjogaHR0cHM6Ly9kb2NzLmF3cy5hbWF6b24uY29tL2Vrcy9sYXRlc3QvdXNlcmd1aWRlL3Jlc3RyaWN0LWVjMi1jcmVkZW50aWFsLWFjY2Vzcy5odG1sCnl1bSBpbnN0YWxsIC15IGlwdGFibGVzLXNlcnZpY2VzOyBpcHRhYmxlcyAtLWluc2VydCBGT1JXQVJEIDEgLS1pbi1pbnRlcmZhY2UgZW5pKyAtLWRlc3RpbmF0aW9uIDE2OS4yNTQuMTY5LjI1NC8zMiAtLWp1bXAgRFJPUDsgaXB0YWJsZXMtc2F2ZSB8IHRlZSAvZXRjL3N5c2NvbmZpZy9pcHRhYmxlczsgc3lzdGVtY3RsIGVuYWJsZSAtLW5vdyBpcHRhYmxlczsKCiMgaW5zdGFsbCBJbnNwZWN0b3IgYWdlbnQKY3VybCAtTyBodHRwczovL2luc3BlY3Rvci1hZ2VudC5hbWF6b25hd3MuY29tL2xpbnV4L2xhdGVzdC9pbnN0YWxsOyBzdWRvIGJhc2ggaW5zdGFsbDsKCiMgaW5zdGFsbCBTU00gYWdlbnQKc3VkbyB5dW0gaW5zdGFsbCAteSBodHRwczovL3MzLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tL2FtYXpvbi1zc20tdXMtZWFzdC0xL2xhdGVzdC9saW51eF9hbWQ2NC9hbWF6b24tc3NtLWFnZW50LnJwbTsgc3VkbyBzeXN0ZW1jdGwgZW5hYmxlIGFtYXpvbi1zc20tYWdlbnQ7IHN1ZG8gc3lzdGVtY3RsIHN0YXJ0IGFtYXpvbi1zc20tYWdlbnQ7Cgo="
         }
     }
 ```
