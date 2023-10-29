@@ -71,8 +71,8 @@ inputs = {
       }
 
       tags = {
-        "self-managed-node"                 = true
-        "k8s_namespace"                     = local.env
+        "self-managed-node" = true
+        "k8s_namespace"     = local.env
       }
     },
   }
