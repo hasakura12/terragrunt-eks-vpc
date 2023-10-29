@@ -32,17 +32,14 @@ terragrunt plan
 pwd
 terragrunt-eks-vpc/ue1/dev
 
-$  terragrunt graph-dependencies
-digraph {
-        "eks" ;
-        "eks" -> "vpc";
-        "vpc" ;
-}
-
 terragrunt run-all validate
 
 # if without undeployed output dependencies among modules
 terragrunt run-all plan # terragrunt plan-all is being deprecated
+
+terragrunt run-all apply
+
+terragrunt run-all destroy
 ```
 
 # Dependency Order
