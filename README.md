@@ -6,6 +6,7 @@ Refs:
 - https://gruntwork.io/repos/v0.0.1-01172020/infrastructure-modules-acme
 - https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/main.tf
 - https://github.com/particuleio/teks/blob/main/terragrunt/live/production/eu-west-1/clusters/demo/eks/terragrunt.hcl
+- https://www.nixknight.com/2023/08/terragrunt-dealing-with-aws-infrastructure-state/
 
 ```sh
 brew install tgenv
