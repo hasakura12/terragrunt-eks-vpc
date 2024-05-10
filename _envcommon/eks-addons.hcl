@@ -29,6 +29,8 @@ locals {
   region               = local.region_vars.locals.region
   region_tag           = local.region_vars.locals.region_tag
 
+  cluster_name    = "eks-${local.env}-${local.region_tag[local.region]}"
+
   # Expose the base source URL so different versions of the module can be deployed in different environments. This will
   # be used to construct the terraform block in the child terragrunt configurations.
   base_source_url = "../../..//modules/eks-addons" # relative path from execution dir
@@ -57,7 +59,7 @@ dependency "eks" {
 # environments.
 # ---------------------------------------------------------------------------------------------------------------------
 inputs = {
-  cluster_name    = "eks-${local.env}-${local.region_tag[local.region]}"
+  cluster_name    = local.cluster_name
   cluster_version = dependency.eks.outputs.cluster_version
   cluster_addons = {
     coredns = {

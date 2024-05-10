@@ -93,7 +93,7 @@ inputs = {
   cluster_certificate_authority_data = dependency.eks.outputs.cluster_certificate_authority_data
   cluster_primary_security_group_id  = dependency.eks.outputs.cluster_primary_security_group_id
 
-  cluster_name = "eks-${local.env}-${local.region_tag[local.region]}"
+  cluster_name = local.cluster_name
   region       = local.region
   region_tag   = local.region_tag
   env          = local.env
@@ -127,7 +127,7 @@ inputs = {
       sudo yum install -y https://s3.us-east-1.amazonaws.com/amazon-ssm-us-east-1/latest/linux_amd64/amazon-ssm-agent.rpm; sudo systemctl enable amazon-ssm-agent; sudo systemctl start amazon-ssm-agent;
 
       EOT
-      bootstrap_extra_args     = "--kubelet-extra-args '--node-labels=env=${local.env},self-managed-node=true,region=ue1,k8s_namespace=${local.env}  --register-with-taints=${local.env}-only=true:PreferNoSchedule'" # for self-managed nodes, taints and labels work only with extra-arg, not ASG tags. Ref: https://aws.amazon.com/blogs/opensource/improvements-eks-worker-node-provisioning/
+      bootstrap_extra_args     = "--kubelet-extra-args '--node-labels=env=${local.env},self-managed-node=true,region=${local.region},k8s_namespace=${local.env}  --register-with-taints=${local.env}-only=true:PreferNoSchedule'" # for self-managed nodes, taints and labels work only with extra-arg, not ASG tags. Ref: https://aws.amazon.com/blogs/opensource/improvements-eks-worker-node-provisioning/
 
       block_device_mappings = {
         xvda = {

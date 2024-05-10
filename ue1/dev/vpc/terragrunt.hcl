@@ -1,3 +1,8 @@
+# LOCAL TESTING PARAMETERES
+# pwd terragrunt-eks-vpc/ue1/dev/vpc
+# terragrunt plan --terragrunt-source-update --terragrunt-download-dir .terragrunt-cache # remote source
+
+
 # Include the root `terragrunt.hcl` configuration. The root configuration contains settings that are common across all
 # components and environments, such as how to configure remote state.
 include "root" {
