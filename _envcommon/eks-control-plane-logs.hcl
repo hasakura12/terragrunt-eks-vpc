@@ -26,8 +26,16 @@ locals {
   region       = local.region_vars.locals.region
   region_tag   = local.region_vars.locals.region_tag
 
+  env_region_metadata = "${local.env}-${local.region_tag[local.region]}"
+  suffix       = ""
+
+  cluster_name = "eks-${local.env_region_metadata}-${local.account_name}-${local.suffix}"
+
   # Expose the base source URL so different versions of the module can be deployed in different environments. This will
   # be used to construct the terraform block in the child terragrunt configurations.
+  ###################
+  # FOR LOCAL SOURCE
+  ###################
   base_source_url = "../../..//modules/eks-control-plane-logs" # relative path from execution dir
 }
 
@@ -37,10 +45,19 @@ locals {
 # environments.
 # ---------------------------------------------------------------------------------------------------------------------
 inputs = {
-  region     = local.region
-  region_tag = local.region_tag
-  env        = local.env
-
-  cluster_name                  = "eks-${local.env}-${local.region_tag[local.region]}"
+  ###################
+  # FOR LOCAL SOURCE
+  # base_source_url = "../../..//modules/eks-control-plane-logs" 
+  ###################
+  cluster_name                  = local.cluster_name
   cluster_log_retention_in_days = 7
+
+
+  ###################
+  # FOR REMOTE SOURCE
+  # REF: https://github.com/terraform-aws-modules/terraform-aws-cloudwatch/blob/master/examples/log-group-with-log-stream/main.tf#L5
+  # base_source_url = "git::git@github.com:terraform-aws-modules/terraform-aws-cloudwatch.git//modules/log-group"
+  ###################
+  # name              = local.cluster_name
+  # retention_in_days = 7
 }

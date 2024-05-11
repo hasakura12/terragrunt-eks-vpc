@@ -32,10 +32,18 @@ locals {
   region       = local.region_vars.locals.region
   region_tag   = local.region_vars.locals.region_tag
 
-  cluster_name = "eks-${local.env}-${local.region_tag[local.region]}" # use "expose = true" in child config to expose this
+  env_region_metadata = "${local.env}-${local.region_tag[local.region]}"
+  suffix       = "local-src-deps"
+
+  cluster_name = "eks-${local.env_region_metadata}-${local.account_name}-${local.suffix}" # use "expose = true" in child config to expose this
+  cluster_version = 1.29
+  instance_type   = "c1.medium"
 
   # Expose the base source URL so different versions of the module can be deployed in different environments. This will
   # be used to construct the terraform block in the child terragrunt configurations.
+  ###################
+  # FOR LOCAL SOURCE
+  ###################
   base_source_url = "../../..//modules/eks-control-plane" # relative path from execution dir
 }
 
@@ -54,8 +62,8 @@ dependency "vpc" {
     azs             = ["az1a", "az1b", "az1c", "az1d"]
   }
 
-  mock_outputs_allowed_terraform_commands = ["plan", "validate"]
-  mock_outputs_merge_strategy_with_state  = "shallow" # merge the mocked outputs and the state outputs
+  mock_outputs_merge_strategy_with_state  = "shallow" # merge the mocked outputs and the state outputs. Ref: https://github.com/gruntwork-io/terragrunt/issues/1733#issuecomment-878609447
+  mock_outputs_allowed_terraform_commands = ["plan", "validate"] # this means for "apply", mocked outputs won't be used even if "mock_outputs_merge_strategy_with_state = true", and might return "Unsupported attribute; This object does not have an attribute named "cloudwatch_log_group_arn". Some reasons could be: 1) output not defined in outputs.tf, or was defined after terraform-applied, hence terraform.tfstate in S3 doesn't have it yet. (if so, pass --terragrunt-source-update or terragrunt refresh) Ref: https://github.com/gruntwork-io/terragrunt/issues/940#issuecomment-910531856
 }
 
 dependency "eks-control-plane-logs" {
@@ -63,11 +71,11 @@ dependency "eks-control-plane-logs" {
 
   # ref: https://terragrunt.gruntwork.io/docs/features/execute-terraform-commands-on-multiple-modules-at-once/#unapplied-dependency-and-mock-outputs
   mock_outputs = {
-    cluster_cloudwatch_logs_arn = "dummy"
+    cloudwatch_log_group_arn = "dummy"
   }
 
-  mock_outputs_merge_strategy_with_state = "shallow" # merge the mocked outputs and the state outputs. Ref: https://github.com/gruntwork-io/terragrunt/issues/1733#issuecomment-878609447
-  mock_outputs_allowed_terraform_commands = ["plan", "validate"] # this means for "apply", mocked outputs won't be used even if "mock_outputs_merge_strategy_with_state = true", and will have error "Unsupported attribute; This object does not have an attribute named "cluster_cloudwatch_logs_arn". Ref: https://github.com/gruntwork-io/terragrunt/issues/940#issuecomment-910531856
+  mock_outputs_merge_strategy_with_state  = "shallow"            # merge the mocked outputs and the state outputs. Ref: https://github.com/gruntwork-io/terragrunt/issues/1733#issuecomment-878609447
+  mock_outputs_allowed_terraform_commands = ["plan", "validate"] # this means for "apply", mocked outputs won't be used even if "mock_outputs_merge_strategy_with_state = true", and might return "Unsupported attribute; This object does not have an attribute named "cloudwatch_log_group_arn". Some reasons could be: 1) output not defined in outputs.tf, or was defined after terraform-applied, hence terraform.tfstate in S3 doesn't have it yet. (if so, pass --terragrunt-source-update or terragrunt refresh) Ref: https://github.com/gruntwork-io/terragrunt/issues/940#issuecomment-910531856
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -76,6 +84,10 @@ dependency "eks-control-plane-logs" {
 # environments.
 # ---------------------------------------------------------------------------------------------------------------------
 inputs = {
+  ###################
+  # FOR LOCAL SOURCE using local resource{} not remote module{}
+  # base_source_url = "../../..//modules/eks-control-plane"
+  ###################
   cluster_name = local.cluster_name
   region       = local.region
   region_tag   = local.region_vars.locals.region_tag
@@ -87,10 +99,10 @@ inputs = {
   vpc_id                      = dependency.vpc.outputs.vpc_id
   private_subnets             = dependency.vpc.outputs.private_subnets
   azs                         = dependency.vpc.outputs.azs
-  cluster_cloudwatch_logs_arn = dependency.eks-control-plane-logs.outputs.cluster_cloudwatch_logs_arn
+  cluster_cloudwatch_logs_arn = dependency.eks-control-plane-logs.outputs.cloudwatch_log_group_arn
 
   create_eks                     = true
-  cluster_version                = 1.28
+  cluster_version                = local.cluster_version
   cluster_endpoint_public_access = true # need this otherwise can't access EKS from outside VPC. Ref: https://github.com/terraform-aws-modules/terraform-aws-eks#input_cluster_endpoint_public_access
   enabled_cluster_log_types      = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 }
