@@ -3,7 +3,7 @@
 # needs to deploy a different module version, it should redefine this block with a different ref to override the
 # deployed version.
 terraform {
-  source = "${local.base_source_url}"
+  source = local.base_source_url
 
   # refs: https://terragrunt.gruntwork.io/docs/features/hooks/#before-and-after-hooks, https://github.com/particuleio/teks/blob/main/terragrunt/live/production/eu-west-1/clusters/demo/eks/terragrunt.hcl#L31
   # after_hook "kubeconfig" {
@@ -66,8 +66,8 @@ dependency "eks-control-plane-logs" {
     cluster_cloudwatch_logs_arn = "dummy"
   }
 
-  mock_outputs_allowed_terraform_commands = ["plan", "validate"]
-  mock_outputs_merge_strategy_with_state  = "shallow" # merge the mocked outputs and the state outputs
+  mock_outputs_merge_strategy_with_state = "shallow" # merge the mocked outputs and the state outputs. Ref: https://github.com/gruntwork-io/terragrunt/issues/1733#issuecomment-878609447
+  mock_outputs_allowed_terraform_commands = ["plan", "validate"] # this means for "apply", mocked outputs won't be used even if "mock_outputs_merge_strategy_with_state = true", and will have error "Unsupported attribute; This object does not have an attribute named "cluster_cloudwatch_logs_arn". Ref: https://github.com/gruntwork-io/terragrunt/issues/940#issuecomment-910531856
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ dependency "eks-control-plane-logs" {
 # environments.
 # ---------------------------------------------------------------------------------------------------------------------
 inputs = {
-  cluster_name = "eks-${local.env}-${local.region_tag[local.region]}"
+  cluster_name = local.cluster_name
   region       = local.region
   region_tag   = local.region_vars.locals.region_tag
   env          = local.env
