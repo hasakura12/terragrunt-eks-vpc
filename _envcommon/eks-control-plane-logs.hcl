@@ -27,7 +27,7 @@ locals {
   region_tag   = local.region_vars.locals.region_tag
 
   env_region_metadata = "${local.env}-${local.region_tag[local.region]}"
-  suffix              = ""
+  suffix              = "local-src-deps"
 
   cluster_name = "eks-${local.env_region_metadata}-${local.account_name}-${local.suffix}"
 
