@@ -33,9 +33,9 @@ locals {
   region_tag   = local.region_vars.locals.region_tag
 
   env_region_metadata = "${local.env}-${local.region_tag[local.region]}"
-  suffix       = "local-src-deps"
+  suffix              = "local-src-deps"
 
-  cluster_name = "eks-${local.env_region_metadata}-${local.account_name}-${local.suffix}" # use "expose = true" in child config to expose this
+  cluster_name    = "eks-${local.env_region_metadata}-${local.account_name}-${local.suffix}" # use "expose = true" in child config to expose this
   cluster_version = 1.29
   instance_type   = "c1.medium"
 
@@ -62,7 +62,7 @@ dependency "vpc" {
     azs             = ["az1a", "az1b", "az1c", "az1d"]
   }
 
-  mock_outputs_merge_strategy_with_state  = "shallow" # merge the mocked outputs and the state outputs. Ref: https://github.com/gruntwork-io/terragrunt/issues/1733#issuecomment-878609447
+  mock_outputs_merge_strategy_with_state  = "shallow"            # merge the mocked outputs and the state outputs. Ref: https://github.com/gruntwork-io/terragrunt/issues/1733#issuecomment-878609447
   mock_outputs_allowed_terraform_commands = ["plan", "validate"] # this means for "apply", mocked outputs won't be used even if "mock_outputs_merge_strategy_with_state = true", and might return "Unsupported attribute; This object does not have an attribute named "cloudwatch_log_group_arn". Some reasons could be: 1) output not defined in outputs.tf, or was defined after terraform-applied, hence terraform.tfstate in S3 doesn't have it yet. (if so, pass --terragrunt-source-update or terragrunt refresh) Ref: https://github.com/gruntwork-io/terragrunt/issues/940#issuecomment-910531856
 }
 
