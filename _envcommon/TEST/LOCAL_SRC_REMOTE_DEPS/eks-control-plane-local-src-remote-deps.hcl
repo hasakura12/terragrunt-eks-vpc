@@ -79,7 +79,7 @@ dependency "eks-control-plane-logs" {
     cloudwatch_log_group_arn = "dummy"
   }
 
-  mock_outputs_merge_strategy_with_state = "shallow" # merge the mocked outputs and the state outputs. Ref: https://github.com/gruntwork-io/terragrunt/issues/1733#issuecomment-878609447
+  mock_outputs_merge_strategy_with_state  = "shallow" # merge the mocked outputs and the state outputs. Ref: https://github.com/gruntwork-io/terragrunt/issues/1733#issuecomment-878609447
   mock_outputs_allowed_terraform_commands = ["plan", "validate"]
 }
 
@@ -91,7 +91,7 @@ dependency "iam-roles-remote-source" {
     poweruser_iam_role_arn = "dummy"
   }
 
-  mock_outputs_merge_strategy_with_state = "shallow" # merge the mocked outputs and the state outputs. Ref: https://github.com/gruntwork-io/terragrunt/issues/1733#issuecomment-878609447
+  mock_outputs_merge_strategy_with_state  = "shallow" # merge the mocked outputs and the state outputs. Ref: https://github.com/gruntwork-io/terragrunt/issues/1733#issuecomment-878609447
   mock_outputs_allowed_terraform_commands = ["plan", "validate"]
 }
 
