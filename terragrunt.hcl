@@ -11,12 +11,11 @@ locals {
   # Extract the variables we need for easy access
   account_name        = local.account_vars.locals.account_name
   account_id          = local.account_vars.locals.aws_account_id
+  admin_role_name     = local.account_vars.locals.admin_role_name
+  terraform_role_name = local.account_vars.locals.terraform_role_name
   region              = local.region_vars.locals.region
   region_tag          = local.region_vars.locals.region_tag
-  terraform_role_name = local.account_vars.locals.terraform_role_name
   env                 = local.environment_vars.locals.env
-
-  cluster_name = "eks-${local.env}-${local.region_tag[local.region]}"
 }
 
 # Generate an AWS provider block
@@ -29,7 +28,7 @@ provider "aws" {
   region = "${local.region}"
 
   assume_role {
-    role_arn = "arn:aws:iam::${local.account_id}:role/${local.terraform_role_name}"
+    role_arn = "arn:aws:iam::${local.account_id}:role/${local.admin_role_name}"
   }
 
   # ref: https://developer.hashicorp.com/terraform/tutorials/aws/aws-default-tags

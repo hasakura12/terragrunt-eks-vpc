@@ -5,5 +5,5 @@ locals {
   aws_account_id       = "266981300450"
   terraform_role_name  = "Terraform"
   developer_role_name  = "Developer"
-  full_admin_role_name = "FullAdmin"
+  admin_role_name      = "Admin"
 }
