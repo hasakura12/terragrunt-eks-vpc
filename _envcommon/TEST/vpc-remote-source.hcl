@@ -78,8 +78,8 @@ dependency "aws-data" {
   }
 
   mock_outputs_merge_strategy_with_state = "shallow" # merge the mocked outputs and the state outputs. Ref: https://github.com/gruntwork-io/terragrunt/issues/1733#issuecomment-878609447
-  # WARNING: for "apply", mocked outputs won't be used even if "mock_outputs_merge_strategy_with_state = true". Some reasons could be: 1) the dependent module hasn't been applied yet, 2) output not defined in outputs.tf, 3) or was defined after terraform-applied, hence terraform.tfstate in S3 doesn't have it yet. (if so, pass --terragrunt-source-update or terragrunt refresh) Ref: https://github.com/gruntwork-io/terragrunt/issues/940#issuecomment-910531856
-  # error "/terragrunt-eks-vpc/ue1/dev/aws-data/terragrunt.hcl is a dependency of /terragrunt-eks-vpc/ue1/dev/vpc-remote-source/terragrunt.hcl but detected no outputs. Either the target module has not been applied yet, or the module has no outputs. If this is expected, set the skip_outputs flag to true on the dependency block."
+  # WARNING1: # for "apply", mocked outputs won't be used even if "mock_outputs_merge_strategy_with_state = shallow", and might cause "Unsupported attribute; This object does not have an attribute named "cloudwatch_log_group_arn". Some reasons could be: 1) the dependent module hasn't been applied yet, 2) output not defined in outputs.tf, 3) or was defined after terraform-applied, hence terraform.tfstate in S3 doesn't have it yet. (if so, pass --terragrunt-source-update or terragrunt refresh) Ref: https://github.com/gruntwork-io/terragrunt/issues/940#issuecomment-910531856
+  # WARNING2: if not "terragrunt apply" yet, you will get error "/terragrunt-eks-vpc/ue1/dev/aws-data/terragrunt.hcl is a dependency of /terragrunt-eks-vpc/ue1/dev/vpc-remote-source/terragrunt.hcl but detected no outputs. Either the target module has not been applied yet, or the module has no outputs. If this is expected, set the skip_outputs flag to true on the dependency block."
   mock_outputs_allowed_terraform_commands = ["plan", "validate"]
 }
 

@@ -50,13 +50,11 @@ dependency "vpc" {
   # WARNING1: # can't use both "expose = true" in child config and "config_path = "../DEP_DIR_NAME"" in the parent config, IF there is dependency {} in parent, that'll mess up path.
   # RESOLUTION: 1) use "config_path = find_in_parent_folders("DEP_DIR_NAME")" or 2) comment out "expose = true"
   # ERRO[0000] Error reading file at path /terragrunt-eks-vpc/_envcommon/TEST/vpc-remote-source: open /terragrunt-eks-vpc/_envcommon/TEST/vpc-remote-source: no such file or directory 
-  # ERRO[0000] Unable to determine underlying exit code, so Terragrunt will exit with error code 1 
-  # config_path = "../vpc-remote-source" # this will try to find in the path "terragrunt-eks-vpc/_envcommon/TEST/vpc-remote-source"
+  # config_path = "../vpc-remote-source"
 
-  # WARNING2: if parent's terragrunt.hcl is not on the same path as dependent module "vpc-remote-source", you will get below error 
-  # ERRO[0000] /terragrunt-eks-vpc/_envcommon/TEST/LOCAL_SRC_REMOTE_DEPS/eks-control-plane-local-src-remote-deps.hcl:56,17-40: Error in function call; Call to function "find_in_parent_folders" failed: ParentFileNotFound: Could not find a ../vpc-remote-source in any of the parent folders of /terragrunt-eks-vpc/ue1/dev/eks-control-plane-local-src-remote-deps/terragrunt.hcl. Cause: Traversed all the way to the root.., and 1 other diagnostic(s) 
+  # WARNING2: if this module's parent terragrunt.hcl is not on the same path as dependent module "vpc-remote-source", you will get below error 
   # WORKAROUND: 1) comment out "expose = true", or 2) use "config_path = find_in_parent_folders("DEP_DIR_NAME")"
-  # this will try to find in parent folders of /terragrunt-eks-vpc/ue1/dev/eks-control-plane-local-src-remote-deps/terragrunt.hcl
+  # ERRO[0000] /terragrunt-eks-vpc/_envcommon/TEST/LOCAL_SRC_REMOTE_DEPS/eks-control-plane-local-src-remote-deps.hcl:56,17-40: Error in function call; Call to function "find_in_parent_folders" failed: ParentFileNotFound: Could not find a ../vpc-remote-source in any of the parent folders of /terragrunt-eks-vpc/ue1/dev/eks-control-plane-local-src-remote-deps/terragrunt.hcl. Cause: Traversed all the way to the root.., and 1 other diagnostic(s) 
   config_path = find_in_parent_folders("vpc-remote-source") # NOTE: workaround for error "/terragrunt-eks-vpc/_envcommon/TEST/DEP_DIR_NAME: no such file or directory". So need to use find_in_parent_folders(). Refs: https://stackoverflow.com/a/70180689, https://github.com/gruntwork-io/terragrunt/issues/2933#issuecomment-1932518342
 
   # ref: https://terragrunt.gruntwork.io/docs/features/execute-terraform-commands-on-multiple-modules-at-once/#unapplied-dependency-and-mock-outputs
@@ -67,21 +65,12 @@ dependency "vpc" {
   }
 
   mock_outputs_merge_strategy_with_state = "shallow" # merge the mocked outputs and the state outputs. Ref: https://github.com/gruntwork-io/terragrunt/issues/1733#issuecomment-878609447
-  # WARNING: for "apply", mocked outputs won't be used even if "mock_outputs_merge_strategy_with_state = true". Some reasons could be: 1) the dependent module hasn't been applied yet, 2) output not defined in outputs.tf, 3) or was defined after terraform-applied, hence terraform.tfstate in S3 doesn't have it yet. (if so, pass --terragrunt-source-update or terragrunt refresh) Ref: https://github.com/gruntwork-io/terragrunt/issues/940#issuecomment-910531856
-  # error "/terragrunt-eks-vpc/ue1/dev/aws-data/terragrunt.hcl is a dependency of /terragrunt-eks-vpc/ue1/dev/vpc-remote-source/terragrunt.hcl but detected no outputs. Either the target module has not been applied yet, or the module has no outputs. If this is expected, set the skip_outputs flag to true on the dependency block."
-  mock_outputs_allowed_terraform_commands = ["plan", "validate"] # this means for "apply", mocked outputs won't be used even if "mock_outputs_merge_strategy_with_state = true", and might return "Unsupported attribute; This object does not have an attribute named "cloudwatch_log_group_arn". Some reasons could be: 1) output not defined in outputs.tf, or was defined after terraform-applied, hence terraform.tfstate in S3 doesn't have it yet. (if so, pass --terragrunt-source-update or terragrunt refresh) Ref: https://github.com/gruntwork-io/terragrunt/issues/940#issuecomment-910531856
+  # WARNING1: # for "apply", mocked outputs won't be used even if "mock_outputs_merge_strategy_with_state = shallow", and might cause "Unsupported attribute; This object does not have an attribute named "cloudwatch_log_group_arn". Some reasons could be: 1) the dependent module hasn't been applied yet, 2) output not defined in outputs.tf, 3) or was defined after terraform-applied, hence terraform.tfstate in S3 doesn't have it yet. (if so, pass --terragrunt-source-update or terragrunt refresh) Ref: https://github.com/gruntwork-io/terragrunt/issues/940#issuecomment-910531856
+  # WARNING2: if not "terragrunt apply" yet, you will get a misleading error (actually just warning if run "terragrunt run-all apply" or go to the dep module and "terragrunt apply") "/terragrunt-eks-vpc/ue1/dev/aws-data/terragrunt.hcl is a dependency of /terragrunt-eks-vpc/ue1/dev/vpc-remote-source/terragrunt.hcl but detected no outputs. Either the target module has not been applied yet, or the module has no outputs. If this is expected, set the skip_outputs flag to true on the dependency block."
+  mock_outputs_allowed_terraform_commands = ["plan", "validate"]
 }
 
 dependency "eks-control-plane-logs" {
-  # WARNING1: # can't use both "expose = true" in child config and "config_path = "../DEP_DIR_NAME"" in the parent config, IF there is dependency {} in parent, that'll mess up path.
-  # RESOLUTION: 1) use "config_path = find_in_parent_folders("DEP_DIR_NAME")" or 2) comment out "expose = true"
-  # ERRO[0000] Error reading file at path /terragrunt-eks-vpc/_envcommon/TEST/eks-control-plane-logs-local-src-remote-deps: open /terragrunt-eks-vpc/_envcommon/TEST/eks-control-plane-logs-local-src-remote-deps: no such file or directory 
-  # config_path = "../eks-control-plane-logs-local-src-remote-deps" # this will try to find in the path "terragrunt-eks-vpc/_envcommon/TEST/iam-roles-remote-source"
-
-  # WARNING2: if parent's terragrunt.hcl is not on the same path as dependent module "DEP_DIR_NAME", you will get below error 
-  # ERRO[0000] /terragrunt-eks-vpc/_envcommon/TEST/LOCAL_SRC_REMOTE_DEPS/eks-control-plane-local-src-remote-deps.hcl:56,17-40: Error in function call; Call to function "find_in_parent_folders" failed: ParentFileNotFound: Could not find a ../vpc-remote-source in any of the parent folders of /terragrunt-eks-vpc/ue1/dev/eks-control-plane-local-src-remote-deps/terragrunt.hcl. Cause: Traversed all the way to the root.., and 1 other diagnostic(s) 
-  # WORKAROUND: 1) comment out "expose = true", or 2) use "config_path = find_in_parent_folders("DEP_DIR_NAME")"
-  # this will try to find in parent folders of /terragrunt-eks-vpc/ue1/dev/eks-control-plane-local-src-remote-deps/terragrunt.hcl
   config_path = find_in_parent_folders("eks-control-plane-logs-local-src-remote-deps") # NOTE: workaround for error "/terragrunt-eks-vpc/_envcommon/TEST/DEP_DIR_NAME: no such file or directory". So need to use find_in_parent_folders(). Refs: https://stackoverflow.com/a/70180689, https://github.com/gruntwork-io/terragrunt/issues/2933#issuecomment-1932518342
 
 
@@ -91,20 +80,10 @@ dependency "eks-control-plane-logs" {
   }
 
   mock_outputs_merge_strategy_with_state = "shallow" # merge the mocked outputs and the state outputs. Ref: https://github.com/gruntwork-io/terragrunt/issues/1733#issuecomment-878609447
-  # WARNING: for "apply", mocked outputs won't be used even if "mock_outputs_merge_strategy_with_state = true". Some reasons could be: 1) the dependent module hasn't been applied yet, 2) output not defined in outputs.tf, 3) or was defined after terraform-applied, hence terraform.tfstate in S3 doesn't have it yet. (if so, pass --terragrunt-source-update or terragrunt refresh) Ref: https://github.com/gruntwork-io/terragrunt/issues/940#issuecomment-910531856
-  mock_outputs_allowed_terraform_commands = ["plan", "validate"] # this means for "apply", mocked outputs won't be used even if "mock_outputs_merge_strategy_with_state = true", and might return "Unsupported attribute; This object does not have an attribute named "cloudwatch_log_group_arn". Some reasons could be: 1) output not defined in outputs.tf, or was defined after terraform-applied, hence terraform.tfstate in S3 doesn't have it yet. (if so, pass --terragrunt-source-update or terragrunt refresh) Ref: https://github.com/gruntwork-io/terragrunt/issues/940#issuecomment-910531856
+  mock_outputs_allowed_terraform_commands = ["plan", "validate"]
 }
 
 dependency "iam-roles-remote-source" {
-  # WARNING1: # can't use both "expose = true" in child config and "config_path = "../DEP_DIR_NAME"" in the parent config, IF there is dependency {} in parent, that'll mess up path.
-  # RESOLUTION: 1) use "config_path = find_in_parent_folders("DEP_DIR_NAME")" or 2) comment out "expose = true"
-  # ERRO[0000] Error reading file at path /terragrunt-eks-vpc/_envcommon/TEST/iam-roles-remote-source: open /terragrunt-eks-vpc/_envcommon/TEST/iam-roles-remote-source: no such file or directory 
-  # config_path = "../iam-roles-remote-source" # this will try to find in the path "/terragrunt-eks-vpc/_envcommon/TEST/iam-roles-remote-source"
-
-  # WARNING2: if parent's terragrunt.hcl is not on the same path as dependent module "DEP_DIR_NAME", you will get below error 
-  # ERRO[0000] /terragrunt-eks-vpc/_envcommon/TEST/LOCAL_SRC_REMOTE_DEPS/eks-control-plane-local-src-remote-deps.hcl:56,17-40: Error in function call; Call to function "find_in_parent_folders" failed: ParentFileNotFound: Could not find a ../vpc-remote-source in any of the parent folders of /terragrunt-eks-vpc/ue1/dev/eks-control-plane-local-src-remote-deps/terragrunt.hcl. Cause: Traversed all the way to the root.., and 1 other diagnostic(s) 
-  # WORKAROUND: 1) comment out "expose = true", or 2) use "config_path = find_in_parent_folders("DEP_DIR_NAME")"
-  # this will try to find in parent folders of /terragrunt-eks-vpc/ue1/dev/eks-control-plane-local-src-remote-deps/terragrunt.hcl
   config_path = find_in_parent_folders("iam-roles-remote-source") # NOTE: workaround for error "/terragrunt-eks-vpc/_envcommon/TEST/DEP_DIR_NAME: no such file or directory". So need to use find_in_parent_folders(). Refs: https://stackoverflow.com/a/70180689, https://github.com/gruntwork-io/terragrunt/issues/2933#issuecomment-1932518342
 
   # ref: https://terragrunt.gruntwork.io/docs/features/execute-terraform-commands-on-multiple-modules-at-once/#unapplied-dependency-and-mock-outputs
@@ -113,8 +92,7 @@ dependency "iam-roles-remote-source" {
   }
 
   mock_outputs_merge_strategy_with_state = "shallow" # merge the mocked outputs and the state outputs. Ref: https://github.com/gruntwork-io/terragrunt/issues/1733#issuecomment-878609447
-  # WARNING: for "apply", mocked outputs won't be used even if "mock_outputs_merge_strategy_with_state = true". Some reasons could be: 1) the dependent module hasn't been applied yet, 2) output not defined in outputs.tf, 3) or was defined after terraform-applied, hence terraform.tfstate in S3 doesn't have it yet. (if so, pass --terragrunt-source-update or terragrunt refresh) Ref: https://github.com/gruntwork-io/terragrunt/issues/940#issuecomment-910531856
-  mock_outputs_allowed_terraform_commands = ["plan", "validate"] # this means for "apply", mocked outputs won't be used even if "mock_outputs_merge_strategy_with_state = true", and might return "Unsupported attribute; This object does not have an attribute named "cloudwatch_log_group_arn". Some reasons could be: 1) output not defined in outputs.tf, or was defined after terraform-applied, hence terraform.tfstate in S3 doesn't have it yet. (if so, pass --terragrunt-source-update or terragrunt refresh) Ref: https://github.com/gruntwork-io/terragrunt/issues/940#issuecomment-910531856
+  mock_outputs_allowed_terraform_commands = ["plan", "validate"]
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
