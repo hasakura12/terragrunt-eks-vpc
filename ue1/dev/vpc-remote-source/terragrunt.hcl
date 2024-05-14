@@ -36,7 +36,7 @@ inputs = {
   # inputs from parent and child config's maps are merged together, instead of overriden, with deep merge (include { merge_strategy = "deep" }). Ref: https://terragrunt.gruntwork.io/docs/reference/config-blocks-and-attributes/#include
   public_subnet_tags = {
     "kubernetes.io/cluster/${local.cluster_name}" = "owned" # for ingress controller. Ref: https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
-    "kubernetes.io/role/internal-elb"             = 1       # for ingress controller. Ref: https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
+    "kubernetes.io/role/elb"                      = 1       # for ingress controller. Ref: https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
   }
 
   private_subnet_tags = {
