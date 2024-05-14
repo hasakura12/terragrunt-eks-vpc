@@ -1,6 +1,6 @@
 # LOCAL TESTING PARAMETERES
 # pwd terraform-eks-ping-pong/terraform/ue1/dev/irsa-aws-ingress-controller
-# terragrunt plan --terragrunt-download-dir ~/terragrunt-cache # remote source
+# terragrunt plan --terragrunt-download-dir ~/terragrunt-cache
 
 # Include the root `terragrunt.hcl` configuration. The root configuration contains settings that are common across all
 # components and environments, such as how to configure remote state.

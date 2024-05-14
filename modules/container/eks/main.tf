@@ -1,5 +1,34 @@
 data "aws_caller_identity" "current" {}
 
+locals {
+  instance_types = [var.instance_type]
+
+  block_device_mappings = {
+    xvda = {
+      device_name = "/dev/xvda"
+      ebs = {
+        volume_size           = 10
+        volume_type           = "gp3"
+        encrypted             = true
+        kms_key_id            = module.kms_ebs.key_arn # this is circular dependency (i.e. this requires KMS to be created first, but KMS requires EKS cluster IAM role ARN), hence can't be defined in terragrunt.hcl as it can't access module.eks. Ideally, separate EKS control plane and EKS workers, and create EKS control plane, KMS, workers (where this block_device_mappings will be defined) in that order 
+        delete_on_termination = true
+      }
+    }
+  }
+
+  appended_self_managed_node_group_list = [
+    for self_managed_node_group in var.self_managed_node_groups :
+    merge(
+      self_managed_node_group,
+      {
+        "block_device_mappings" = local.block_device_mappings
+      }
+    )
+  ]
+
+  final_self_managed_node_groups = zipmap(local.instance_types, local.appended_self_managed_node_group_list)
+}
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws" # "git::git@github.com:terraform-aws-modules/terraform-aws-eks.git"
   version = "~> 20.10.0"
@@ -17,7 +46,7 @@ module "eks" {
   control_plane_subnet_ids = var.control_plane_subnet_ids
 
   self_managed_node_group_defaults = var.self_managed_node_group_defaults
-  self_managed_node_groups         = var.self_managed_node_groups
+  self_managed_node_groups         = local.final_self_managed_node_groups
 
   cloudwatch_log_group_retention_in_days = var.cloudwatch_log_group_retention_in_days
   cluster_enabled_log_types              = var.cluster_enabled_log_types

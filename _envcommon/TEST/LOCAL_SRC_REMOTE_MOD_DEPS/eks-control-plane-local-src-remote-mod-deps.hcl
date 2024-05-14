@@ -34,7 +34,7 @@ locals {
 
   cluster_name    = "eks-${local.env_region_metadata}-${local.account_name}-${local.suffix}" # use "expose = true" in child config to expose this
   cluster_version = 1.29
-  instance_type   = "c1.medium"
+  instance_type   = "m6i.large" # available IPs will vary based on instance type: https://docs.aws.amazon.com/eks/latest/userguide/choosing-instance-type.html#determine-max-pods
 
   kms_key_name = "cmk-${local.env_region_metadata}-${local.account_name}-${local.suffix}"
 
@@ -129,7 +129,6 @@ inputs = {
   # ref: https://github.com/gruntwork-io/terragrunt/issues/1330#issuecomment-1589092127
   vpc_id                   = dependency.vpc.outputs.vpc_id
   subnet_ids               = dependency.vpc.outputs.private_subnets
-  control_plane_subnet_ids = dependency.vpc.outputs.public_subnets
 
   # NOTE: move these to module as TG inputs {} can't call module.
   # External encryption key
@@ -140,32 +139,11 @@ inputs = {
   # }
 
   self_managed_node_group_defaults = {
-    # enable discovery of autoscaling groups by cluster-autoscaler
-    autoscaling_group_tags = {
-      "k8s.io/cluster-autoscaler/enabled" : true,
-      "k8s.io/cluster-autoscaler/${local.cluster_name}" : "owned",
-    }
-  }
+    instance_type            = local.instance_type
+    min_size     = 1
+    max_size     = 1
 
-  self_managed_node_groups = {
-    # Default node group - as provisioned by the module defaults
-    default_node_group = {
-      name            = "self-managed-worker-group-${local.env}-c1medium"
-      use_name_prefix = false
-
-      subnet_ids = dependency.vpc.outputs.private_subnets
-
-      min_size     = 1
-      max_size     = 1
-      desired_size = 1
-
-      # ami_id = data.aws_ami.eks_default.id
-
-      pre_bootstrap_user_data = <<-EOT
-          export FOO=bar
-        EOT
-
-      post_bootstrap_user_data = <<-EOT
+    post_bootstrap_user_data = <<-EOT
         # this is to completely block all containers running on a worker node from querying the instance metadata service for any metadata to avoid pods from using node's IAM instance profile
         # ref: https://docs.aws.amazon.com/eks/latest/userguide/restrict-ec2-credential-access.html
         yum install -y iptables-services; iptables --insert FORWARD 1 --in-interface eni+ --destination 169.254.169.254/32 --jump DROP; iptables-save | tee /etc/sysconfig/iptables; systemctl enable --now iptables;
@@ -175,42 +153,20 @@ inputs = {
 
         # install SSM agent
         sudo yum install -y https://s3.us-east-1.amazonaws.com/amazon-ssm-us-east-1/latest/linux_amd64/amazon-ssm-agent.rpm; sudo systemctl enable amazon-ssm-agent; sudo systemctl start amazon-ssm-agent;
+    EOT
 
-        EOT
+    # enable discovery of autoscaling groups by cluster-autoscaler
+    autoscaling_group_tags = {
+      "k8s.io/cluster-autoscaler/enabled" : true,
+      "k8s.io/cluster-autoscaler/${local.cluster_name}" : "owned",
+    }
+  }
 
-      instance_type            = local.instance_type
-      iam_role_use_name_prefix = false
+  self_managed_node_groups = {
+    workers = {
+      name            = "eks-workers"
 
-      # block_device_mappings = {
-      #   xvda = {
-      #     device_name = "/dev/xvda"
-      #     ebs = {
-      #       volume_size           = 10
-      #       volume_type           = "gp3"
-      #       encrypted             = true
-      #       kms_key_id            = module.kms_ebs.key_id # TODO: dependency
-      #       delete_on_termination = true
-      #     }
-      #   }
-      # }
-
-      instance_attributes = {
-        name = "instance-attributes"
-
-        min_size     = 1
-        max_size     = 1
-        desired_size = 1
-
-        bootstrap_extra_args = "--kubelet-extra-args '--node-labels=node.kubernetes.io/lifecycle=spot,env=${local.env},self-managed-node=true,region=${local.region} --register-with-taints=${local.env}-only=true:PreferNoSchedule'"
-      }
-
-      create_iam_role          = true
-      iam_role_name            = "self-managed-node-group-complete-example"
-      iam_role_use_name_prefix = false
-      iam_role_description     = "Self managed node group complete example role"
-      iam_role_additional_policies = {
-        AmazonEC2ContainerRegistryReadOnly = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-      }
+      bootstrap_extra_args = "--kubelet-extra-args '--node-labels=node.kubernetes.io/lifecycle=spot,env=${local.env},self-managed-node=true,region=${local.region} --register-with-taints=${local.env}-only=true:PreferNoSchedule'"
     }
   }
 
