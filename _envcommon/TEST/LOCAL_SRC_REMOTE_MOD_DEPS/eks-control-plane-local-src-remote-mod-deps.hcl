@@ -127,8 +127,8 @@ inputs = {
   # note: if dependent module "vpc" hasn't been deployed, "terragrunt plan" will error out "Either the target module has not been applied yet, or the module has no outputs"
   # ref: "If module A depends on module B and module B hasn’t been applied yet, then run-all plan will show the plan for B, but exit with an error when trying to show the plan for A"
   # ref: https://github.com/gruntwork-io/terragrunt/issues/1330#issuecomment-1589092127
-  vpc_id                   = dependency.vpc.outputs.vpc_id
-  subnet_ids               = dependency.vpc.outputs.private_subnets
+  vpc_id     = dependency.vpc.outputs.vpc_id
+  subnet_ids = dependency.vpc.outputs.private_subnets
 
   # NOTE: move these to module as TG inputs {} can't call module.
   # External encryption key
@@ -139,9 +139,9 @@ inputs = {
   # }
 
   self_managed_node_group_defaults = {
-    instance_type            = local.instance_type
-    min_size     = 1
-    max_size     = 1
+    instance_type = local.instance_type
+    min_size      = 1
+    max_size      = 1
 
     post_bootstrap_user_data = <<-EOT
         # this is to completely block all containers running on a worker node from querying the instance metadata service for any metadata to avoid pods from using node's IAM instance profile
@@ -164,7 +164,7 @@ inputs = {
 
   self_managed_node_groups = {
     workers = {
-      name            = "eks-workers"
+      name = "eks-workers"
 
       bootstrap_extra_args = "--kubelet-extra-args '--node-labels=node.kubernetes.io/lifecycle=spot,env=${local.env},self-managed-node=true,region=${local.region} --register-with-taints=${local.env}-only=true:PreferNoSchedule'"
     }
