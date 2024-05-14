@@ -150,9 +150,6 @@ inputs = {
 
         # install Inspector agent
         curl -O https://inspector-agent.amazonaws.com/linux/latest/install; sudo bash install;
-
-        # install SSM agent
-        sudo yum install -y https://s3.us-east-1.amazonaws.com/amazon-ssm-us-east-1/latest/linux_amd64/amazon-ssm-agent.rpm; sudo systemctl enable amazon-ssm-agent; sudo systemctl start amazon-ssm-agent;
     EOT
 
     # enable discovery of autoscaling groups by cluster-autoscaler
