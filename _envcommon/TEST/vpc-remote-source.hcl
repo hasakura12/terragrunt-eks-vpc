@@ -27,7 +27,7 @@ locals {
   region_tag   = local.region_vars.locals.region_tag
 
   env_region_metadata = "${local.env}-${local.region_tag[local.region]}"
-  suffix              = "remote-src"
+  suffix              = "local-src-remote-mod-deps"
 
   vpc_cidr = "10.1.0.0/16"
   az_names = [
