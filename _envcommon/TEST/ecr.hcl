@@ -21,17 +21,17 @@ locals {
   region_vars = read_terragrunt_config(find_in_parent_folders("region.hcl"))
 
   # Extract out common variables for reuse
-  account_name   = local.account_vars.locals.account_name
-  aws_account_id = local.account_vars.locals.aws_account_id
+  account_name        = local.account_vars.locals.account_name
+  aws_account_id      = local.account_vars.locals.aws_account_id
   admin_role_name     = local.account_vars.locals.admin_role_name
   terraform_role_name = local.account_vars.locals.terraform_role_name
-  env            = local.environment_vars.locals.env
-  region         = local.region_vars.locals.region
-  region_tag     = local.region_vars.locals.region_tag
+  env                 = local.environment_vars.locals.env
+  region              = local.region_vars.locals.region
+  region_tag          = local.region_vars.locals.region_tag
 
   env_region_metadata = "${local.env}-${local.region_tag[local.region]}"
-  suffix = "local-src-remote-deps"
-  name   = "ecr-${local.env_region_metadata}-${local.account_name}-${local.suffix}"
+  suffix              = "local-src-remote-deps"
+  name                = "ecr-${local.env_region_metadata}-${local.account_name}-${local.suffix}"
 
   # Expose the base source URL so different versions of the module can be deployed in different environments. This will
   # be used to construct the terraform block in the child terragrunt configurations.
@@ -58,8 +58,8 @@ inputs = {
     "arn:aws:iam::${local.aws_account_id}:role/${local.admin_role_name}",
     "arn:aws:iam::${local.aws_account_id}:role/${local.terraform_role_name}",
   ]
-  create_lifecycle_policy           = true
-  repository_image_tag_mutability   = "MUTABLE"
+  create_lifecycle_policy         = true
+  repository_image_tag_mutability = "MUTABLE"
   repository_lifecycle_policy = jsonencode({
     rules = [
       {
